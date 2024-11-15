@@ -1,4 +1,4 @@
-package almanax
+package almanaxes
 
 import (
 	amqp "github.com/kaellybot/kaelly-amqp"

@@ -1,4 +1,4 @@
-package almanax
+package almanaxes
 
 import (
 	amqp "github.com/kaellybot/kaelly-amqp"
@@ -13,7 +13,7 @@ func New(db databases.MySQLConnection) *Impl {
 func (repo *Impl) Get(game amqp.Game) ([]*entities.WebhookAlmanax, error) {
 	var webhooks []*entities.WebhookAlmanax
 	err := repo.db.GetDB().
-		Where("game = ?").
+		Where("game = ?", game).
 		Find(&webhooks).Error
 	if err != nil {
 		return nil, err

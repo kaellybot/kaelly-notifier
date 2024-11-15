@@ -3,6 +3,10 @@ package application
 import (
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/models/constants"
+	"github.com/kaellybot/kaelly-notifier/repositories/almanaxes"
+	"github.com/kaellybot/kaelly-notifier/repositories/feeds"
+	"github.com/kaellybot/kaelly-notifier/repositories/twitch"
+	"github.com/kaellybot/kaelly-notifier/repositories/youtube"
 	"github.com/kaellybot/kaelly-notifier/services/notifiers"
 	"github.com/kaellybot/kaelly-notifier/utils/databases"
 	"github.com/rs/zerolog/log"
@@ -20,10 +24,14 @@ func New() (*Impl, error) {
 		amqp.WithBindings(notifiers.GetBinding()))
 
 	// Repositories
-	// TODO
+	almanaxRepo := almanaxes.New(db)
+	feedRepo := feeds.New(db)
+	twitchRepo := twitch.New(db)
+	youtubeRepo := youtube.New(db)
 
 	// services
-	notifierService := notifiers.New(broker)
+	notifierService := notifiers.New(broker, almanaxRepo, feedRepo,
+		twitchRepo, youtubeRepo)
 
 	return &Impl{
 		db:              db,

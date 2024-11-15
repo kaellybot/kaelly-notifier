@@ -3,12 +3,21 @@ package notifiers
 import (
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/models/constants"
+	"github.com/kaellybot/kaelly-notifier/repositories/almanaxes"
+	"github.com/kaellybot/kaelly-notifier/repositories/feeds"
+	"github.com/kaellybot/kaelly-notifier/repositories/twitch"
+	"github.com/kaellybot/kaelly-notifier/repositories/youtube"
 	"github.com/rs/zerolog/log"
 )
 
-func New(broker amqp.MessageBroker) *Impl {
+func New(broker amqp.MessageBroker, almanaxRepo almanaxes.Repository, feedRepo feeds.Repository,
+	twitchRepo twitch.Repository, youtubeRepo youtube.Repository) *Impl {
 	return &Impl{
-		broker: broker,
+		broker:      broker,
+		almanaxRepo: almanaxRepo,
+		feedRepo:    feedRepo,
+		twitchRepo:  twitchRepo,
+		youtubeRepo: youtubeRepo,
 	}
 }
 
