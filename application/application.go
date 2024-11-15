@@ -38,7 +38,8 @@ func (app *Impl) Run() error {
 		return errBroker
 	}
 
-	return app.notifierService.Consume()
+	app.notifierService.Consume()
+	return nil
 }
 
 func (app *Impl) Shutdown() {

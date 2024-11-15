@@ -14,12 +14,19 @@ func MapFeed(rssMessage *amqp.NewsRSSMessage) discordgo.WebhookParams {
 		AvatarURL: constants.AvatarURL,
 		Embeds: []*discordgo.MessageEmbed{
 			{
-				Title:     rssMessage.Title,
-				URL:       rssMessage.Url,
-				Color:     constants.RSSColor,
-				Author:    &discordgo.MessageEmbedAuthor{Name: rssMessage.AuthorName, URL: rssMessage.Url},
-				Thumbnail: &discordgo.MessageEmbedThumbnail{URL: constants.RSSLogo},
-				Image:     &discordgo.MessageEmbedImage{URL: rssMessage.IconUrl},
+				Title: rssMessage.Title,
+				URL:   rssMessage.Url,
+				Color: constants.RSSColor,
+				Author: &discordgo.MessageEmbedAuthor{
+					Name: rssMessage.AuthorName,
+					URL:  rssMessage.Url,
+				},
+				Thumbnail: &discordgo.MessageEmbedThumbnail{
+					URL: constants.RSSLogo,
+				},
+				Image: &discordgo.MessageEmbedImage{
+					URL: rssMessage.IconUrl,
+				},
 				Timestamp: rssMessage.Date.AsTime().Format(time.RFC3339),
 			},
 		},
