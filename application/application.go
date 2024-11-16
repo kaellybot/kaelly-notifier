@@ -7,6 +7,7 @@ import (
 	"github.com/kaellybot/kaelly-notifier/repositories/feeds"
 	"github.com/kaellybot/kaelly-notifier/repositories/twitch"
 	"github.com/kaellybot/kaelly-notifier/repositories/youtube"
+	"github.com/kaellybot/kaelly-notifier/services/discord"
 	"github.com/kaellybot/kaelly-notifier/services/notifiers"
 	"github.com/kaellybot/kaelly-notifier/utils/databases"
 	"github.com/rs/zerolog/log"
@@ -30,8 +31,13 @@ func New() (*Impl, error) {
 	youtubeRepo := youtube.New(db)
 
 	// services
-	notifierService := notifiers.New(broker, almanaxRepo, feedRepo,
-		twitchRepo, youtubeRepo)
+	discordService, errDisc := discord.New(viper.GetString(constants.DiscordToken))
+	if errDisc != nil {
+		log.Fatal().Err(errDB).Msgf("Discord connection failed, shutting down.")
+	}
+
+	notifierService := notifiers.New(broker, discordService, almanaxRepo,
+		feedRepo, twitchRepo, youtubeRepo)
 
 	return &Impl{
 		db:              db,

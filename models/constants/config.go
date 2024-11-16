@@ -7,6 +7,15 @@ import (
 const (
 	ConfigFileName = ".env"
 
+	// Discord Bot Token.
+	DiscordToken = "DISCORD_TOKEN"
+
+	// Discord webhook ID used for internal purposes.
+	DiscordWebhookID = "DISCORD_WEBHOOK_ID"
+
+	// Discord webhook token used for internal purposes.
+	DiscordWebhookToken = "DISCORD_WEBHOOK_TOKEN"
+
 	// MySQL URL with the following format: HOST:PORT.
 	MySQLURL = "MYSQL_URL"
 
@@ -22,12 +31,6 @@ const (
 	// RabbitMQ address.
 	RabbitMQAddress = "RABBITMQ_ADDRESS"
 
-	// Webhook ID used for internal purposes.
-	InternalWebhookID = "INTERNAL_WEBHOOK_ID"
-
-	// Webhook Token used for internal purposes.
-	InternalWebhookToken = "INTERNAL_WEBHOOK_TOKEN"
-
 	// Metric port.
 	MetricPort = "METRIC_PORT"
 
@@ -37,29 +40,31 @@ const (
 	// Boolean; used to register commands at development guild level or globally.
 	Production = "PRODUCTION"
 
-	defaultMySQLURL             = "localhost:3306"
-	defaultMySQLUser            = ""
-	defaultMySQLPassword        = ""
-	defaultMySQLDatabase        = "kaellybot"
-	defaultRabbitMQAddress      = "amqp://localhost:5672"
-	defaultInternalWebhookID    = ""
-	defaultInternalWebhookToken = ""
-	defaultMetricPort           = 2112
-	defaultLogLevel             = zerolog.InfoLevel
-	defaultProduction           = false
+	defaultDiscordToken        = ""
+	defaultDiscordWebhookID    = ""
+	defaultDiscordWebhookToken = ""
+	defaultMySQLURL            = "localhost:3306"
+	defaultMySQLUser           = ""
+	defaultMySQLPassword       = ""
+	defaultMySQLDatabase       = "kaellybot"
+	defaultRabbitMQAddress     = "amqp://localhost:5672"
+	defaultMetricPort          = 2112
+	defaultLogLevel            = zerolog.InfoLevel
+	defaultProduction          = false
 )
 
 func GetDefaultConfigValues() map[string]any {
 	return map[string]any{
-		MySQLURL:             defaultMySQLURL,
-		MySQLUser:            defaultMySQLUser,
-		MySQLPassword:        defaultMySQLPassword,
-		MySQLDatabase:        defaultMySQLDatabase,
-		RabbitMQAddress:      defaultRabbitMQAddress,
-		InternalWebhookID:    defaultInternalWebhookID,
-		InternalWebhookToken: defaultInternalWebhookToken,
-		MetricPort:           defaultMetricPort,
-		LogLevel:             defaultLogLevel.String(),
-		Production:           defaultProduction,
+		DiscordToken:        defaultDiscordToken,
+		DiscordWebhookID:    defaultDiscordWebhookID,
+		DiscordWebhookToken: defaultDiscordWebhookToken,
+		MySQLURL:            defaultMySQLURL,
+		MySQLUser:           defaultMySQLUser,
+		MySQLPassword:       defaultMySQLPassword,
+		MySQLDatabase:       defaultMySQLDatabase,
+		RabbitMQAddress:     defaultRabbitMQAddress,
+		MetricPort:          defaultMetricPort,
+		LogLevel:            defaultLogLevel.String(),
+		Production:          defaultProduction,
 	}
 }

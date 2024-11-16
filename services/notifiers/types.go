@@ -6,6 +6,7 @@ import (
 	"github.com/kaellybot/kaelly-notifier/repositories/feeds"
 	"github.com/kaellybot/kaelly-notifier/repositories/twitch"
 	"github.com/kaellybot/kaelly-notifier/repositories/youtube"
+	"github.com/kaellybot/kaelly-notifier/services/discord"
 )
 
 const (
@@ -18,10 +19,12 @@ type Service interface {
 }
 
 type Impl struct {
-	broker      amqp.MessageBroker
-	almanaxRepo almanaxes.Repository
-	feedRepo    feeds.Repository
-	twitchRepo  twitch.Repository
-	youtubeRepo youtube.Repository
-	// TODO Discord webhook
+	broker               amqp.MessageBroker
+	discordService       discord.Service
+	almanaxRepo          almanaxes.Repository
+	feedRepo             feeds.Repository
+	twitchRepo           twitch.Repository
+	youtubeRepo          youtube.Repository
+	internalWebhookID    string
+	internalWebhookToken string
 }

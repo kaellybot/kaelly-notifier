@@ -8,8 +8,8 @@ import (
 	"github.com/kaellybot/kaelly-notifier/models/constants"
 )
 
-func MapFeed(rssMessage *amqp.NewsRSSMessage) discordgo.WebhookParams {
-	webhookMessage := discordgo.WebhookParams{
+func MapFeed(rssMessage *amqp.NewsRSSMessage) *discordgo.WebhookParams {
+	return &discordgo.WebhookParams{
 		Username:  constants.ExternalName,
 		AvatarURL: constants.AvatarURL,
 		Embeds: []*discordgo.MessageEmbed{
@@ -31,5 +31,4 @@ func MapFeed(rssMessage *amqp.NewsRSSMessage) discordgo.WebhookParams {
 			},
 		},
 	}
-	return webhookMessage
 }

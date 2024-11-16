@@ -7,17 +7,22 @@ import (
 	"github.com/kaellybot/kaelly-notifier/repositories/feeds"
 	"github.com/kaellybot/kaelly-notifier/repositories/twitch"
 	"github.com/kaellybot/kaelly-notifier/repositories/youtube"
+	"github.com/kaellybot/kaelly-notifier/services/discord"
 	"github.com/rs/zerolog/log"
+	"github.com/spf13/viper"
 )
 
-func New(broker amqp.MessageBroker, almanaxRepo almanaxes.Repository, feedRepo feeds.Repository,
-	twitchRepo twitch.Repository, youtubeRepo youtube.Repository) *Impl {
+func New(broker amqp.MessageBroker, discordService discord.Service, almanaxRepo almanaxes.Repository,
+	feedRepo feeds.Repository, twitchRepo twitch.Repository, youtubeRepo youtube.Repository) *Impl {
 	return &Impl{
-		broker:      broker,
-		almanaxRepo: almanaxRepo,
-		feedRepo:    feedRepo,
-		twitchRepo:  twitchRepo,
-		youtubeRepo: youtubeRepo,
+		broker:               broker,
+		discordService:       discordService,
+		almanaxRepo:          almanaxRepo,
+		feedRepo:             feedRepo,
+		twitchRepo:           twitchRepo,
+		youtubeRepo:          youtubeRepo,
+		internalWebhookID:    viper.GetString(constants.DiscordWebhookID),
+		internalWebhookToken: viper.GetString(constants.DiscordWebhookToken),
 	}
 }
 

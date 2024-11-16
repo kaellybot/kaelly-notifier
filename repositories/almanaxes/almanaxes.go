@@ -1,6 +1,8 @@
 package almanaxes
 
 import (
+	"time"
+
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/models/entities"
 	"github.com/kaellybot/kaelly-notifier/utils/databases"
@@ -10,10 +12,10 @@ func New(db databases.MySQLConnection) *Impl {
 	return &Impl{db: db}
 }
 
-func (repo *Impl) Get(game amqp.Game) ([]*entities.WebhookAlmanax, error) {
+func (repo *Impl) Get(game amqp.Game, date time.Time) ([]*entities.WebhookAlmanax, error) {
 	var webhooks []*entities.WebhookAlmanax
 	err := repo.db.GetDB().
-		Where("game = ?", game).
+		Where("game = ? AND updated_at < ?", game, date).
 		Find(&webhooks).Error
 	if err != nil {
 		return nil, err

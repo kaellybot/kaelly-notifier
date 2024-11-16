@@ -9,6 +9,7 @@ import (
 
 	"github.com/kaellybot/kaelly-notifier/application"
 	"github.com/kaellybot/kaelly-notifier/models/constants"
+	i18n "github.com/kaysoro/discordgo-i18n"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -19,6 +20,7 @@ func init() {
 	initConfig()
 	initLog()
 	initMetrics()
+	initI18n()
 }
 
 func initConfig() {
@@ -74,6 +76,18 @@ func initMetrics() {
 			log.Error().Err(err).Msgf("Cannot listen and serve Prometheus metrics")
 		}
 	}()
+}
+
+func initI18n() {
+	i18n.SetDefault(constants.DefaultLocale)
+	for _, language := range constants.GetLanguages() {
+		if err := i18n.LoadBundle(language.Locale, language.TranslationFile); err != nil {
+			log.Warn().Err(err).
+				Str(constants.LogLocale, language.Locale.String()).
+				Str(constants.LogFileName, language.TranslationFile).
+				Msgf("Cannot load translation file, continue...")
+		}
+	}
 }
 
 func main() {

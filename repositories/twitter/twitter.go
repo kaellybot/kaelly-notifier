@@ -1,6 +1,8 @@
 package twitter
 
 import (
+	"time"
+
 	"github.com/kaellybot/kaelly-notifier/models/entities"
 	"github.com/kaellybot/kaelly-notifier/utils/databases"
 )
@@ -9,10 +11,10 @@ func New(db databases.MySQLConnection) *Impl {
 	return &Impl{db: db}
 }
 
-func (repo *Impl) Get(twitterID string) ([]*entities.WebhookTwitter, error) {
+func (repo *Impl) Get(twitterID string, date time.Time) ([]*entities.WebhookTwitter, error) {
 	var webhooks []*entities.WebhookTwitter
 	err := repo.db.GetDB().
-		Where("twitter_id = ?", twitterID).
+		Where("twitter_id = ? AND updated_at < ?", twitterID, date).
 		Find(&webhooks).Error
 	if err != nil {
 		return nil, err
