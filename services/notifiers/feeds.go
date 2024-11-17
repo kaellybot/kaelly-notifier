@@ -36,5 +36,4 @@ func (service *Impl) feedNews(ctx amqp.Context, message *amqp.RabbitMQMessage) {
 		Msg("Feed published!")
 
 	// TODO treat failed webhooks
-
 }

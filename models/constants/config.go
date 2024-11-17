@@ -13,6 +13,7 @@ const (
 	// Discord webhook ID used for internal purposes.
 	DiscordWebhookID = "DISCORD_WEBHOOK_ID"
 
+	//nolint:gosec // False positive.
 	// Discord webhook token used for internal purposes.
 	DiscordWebhookToken = "DISCORD_WEBHOOK_TOKEN"
 
