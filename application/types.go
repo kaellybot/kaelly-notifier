@@ -4,6 +4,7 @@ import (
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/services/notifiers"
 	"github.com/kaellybot/kaelly-notifier/utils/databases"
+	"github.com/kaellybot/kaelly-notifier/utils/insights"
 )
 
 type Application interface {
@@ -12,7 +13,9 @@ type Application interface {
 }
 
 type Impl struct {
-	db              databases.MySQLConnection
 	broker          amqp.MessageBroker
+	db              databases.MySQLConnection
+	probes          insights.Probes
+	prom            insights.PrometheusMetrics
 	notifierService notifiers.Service
 }

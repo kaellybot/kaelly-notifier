@@ -10,19 +10,18 @@ import (
 	"github.com/kaellybot/kaelly-notifier/services/discord"
 	"github.com/kaellybot/kaelly-notifier/services/notifiers"
 	"github.com/kaellybot/kaelly-notifier/utils/databases"
+	"github.com/kaellybot/kaelly-notifier/utils/insights"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 )
 
 func New() (*Impl, error) {
 	// misc
-	db, errDB := databases.New()
-	if errDB != nil {
-		log.Fatal().Err(errDB).Msgf("DB instantiation failed, shutting down.")
-	}
-
 	broker := amqp.New(constants.RabbitMQClientID, viper.GetString(constants.RabbitMQAddress),
 		amqp.WithBindings(notifiers.GetBinding()))
+	db := databases.New()
+	probes := insights.NewProbes(broker.IsConnected, db.IsConnected)
+	prom := insights.NewPrometheusMetrics()
 
 	// Repositories
 	almanaxRepo := almanaxes.New(db)
@@ -33,23 +32,31 @@ func New() (*Impl, error) {
 	// services
 	discordService, errDisc := discord.New(viper.GetString(constants.DiscordToken))
 	if errDisc != nil {
-		log.Fatal().Err(errDB).Msgf("Discord connection failed, shutting down.")
+		log.Fatal().Err(errDisc).Msgf("Discord connection failed, shutting down.")
 	}
 
 	notifierService := notifiers.New(broker, discordService, almanaxRepo,
 		feedRepo, twitchRepo, youtubeRepo)
 
 	return &Impl{
-		db:              db,
 		broker:          broker,
+		db:              db,
+		probes:          probes,
+		prom:            prom,
 		notifierService: notifierService,
 	}, nil
 }
 
 func (app *Impl) Run() error {
-	errBroker := app.broker.Run()
-	if errBroker != nil {
-		return errBroker
+	app.probes.ListenAndServe()
+	app.prom.ListenAndServe()
+
+	if err := app.db.Run(); err != nil {
+		return err
+	}
+
+	if err := app.broker.Run(); err != nil {
+		return err
 	}
 
 	app.notifierService.Consume()
@@ -57,7 +64,9 @@ func (app *Impl) Run() error {
 }
 
 func (app *Impl) Shutdown() {
-	app.db.Shutdown()
 	app.broker.Shutdown()
+	app.db.Shutdown()
+	app.prom.Shutdown()
+	app.probes.Shutdown()
 	log.Info().Msgf("Application is no longer running")
 }
