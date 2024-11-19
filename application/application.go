@@ -3,10 +3,7 @@ package application
 import (
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/models/constants"
-	"github.com/kaellybot/kaelly-notifier/repositories/almanaxes"
-	"github.com/kaellybot/kaelly-notifier/repositories/feeds"
-	"github.com/kaellybot/kaelly-notifier/repositories/twitch"
-	"github.com/kaellybot/kaelly-notifier/repositories/youtube"
+	"github.com/kaellybot/kaelly-notifier/repositories/webhooks"
 	"github.com/kaellybot/kaelly-notifier/services/discord"
 	"github.com/kaellybot/kaelly-notifier/services/notifiers"
 	"github.com/kaellybot/kaelly-notifier/utils/databases"
@@ -24,10 +21,7 @@ func New() (*Impl, error) {
 	prom := insights.NewPrometheusMetrics()
 
 	// Repositories
-	almanaxRepo := almanaxes.New(db)
-	feedRepo := feeds.New(db)
-	twitchRepo := twitch.New(db)
-	youtubeRepo := youtube.New(db)
+	webhooksRepo := webhooks.New(db)
 
 	// services
 	discordService, errDisc := discord.New(viper.GetString(constants.DiscordToken))
@@ -35,14 +29,14 @@ func New() (*Impl, error) {
 		log.Fatal().Err(errDisc).Msgf("Discord connection failed, shutting down.")
 	}
 
-	notifierService := notifiers.New(broker, discordService, almanaxRepo,
-		feedRepo, twitchRepo, youtubeRepo)
+	notifierService := notifiers.New(broker, discordService, webhooksRepo)
 
 	return &Impl{
 		broker:          broker,
 		db:              db,
 		probes:          probes,
 		prom:            prom,
+		discordService:  discordService,
 		notifierService: notifierService,
 	}, nil
 }

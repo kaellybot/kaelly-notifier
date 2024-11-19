@@ -10,30 +10,31 @@ import (
 
 func (service *Impl) feedNews(ctx amqp.Context, message *amqp.RabbitMQMessage) {
 	feedTypeID := message.NewsRSSMessage.Type
-	date := message.NewsRSSMessage.Date.AsTime()
-	webhooks, err := service.feedRepo.
-		Get(feedTypeID, message.Game, message.Language, date)
-	if err != nil {
-		log.Error().Err(err).
+	feedWebhooks, errGet := service.webhookRepo.
+		GetFeedWebhooks(feedTypeID, message.Game, message.Language)
+	if errGet != nil {
+		log.Error().Err(errGet).
 			Str(constants.LogCorrelationID, ctx.CorrelationID).
+			Str(constants.LogEntityID, feedTypeID).
+			Str(constants.LogGame, message.Game.String()).
+			Str(constants.LogLocale, message.Language.String()).
 			Msg("Cannot retrieve feed webhooks, ignoring the feed occurence")
 		return
 	}
 
-	content := mappers.MapFeed(message.NewsRSSMessage)
-	failedWebhooks := make([]*entities.WebhookFeed, 0)
-	for _, webhook := range webhooks {
-		errPub := service.discordService.
-			PublishWebhook(webhook.WebhookID, webhook.WebhookToken, content)
-		if errPub != nil {
-			failedWebhooks = append(failedWebhooks, webhook)
-		}
+	content := mappers.MapFeed(message.NewsRSSMessage, message.Language)
+	webhooks := make([]*constants.Webhook, 0)
+	for _, feedWebhook := range feedWebhooks {
+		webhooks = append(webhooks, &feedWebhook.Webhook)
 	}
 
+	dispatched := service.dispatch(content, &entities.WebhookFeed{}, webhooks)
 	log.Info().
-		Int(constants.LogWebhookCount, len(webhooks)).
-		Int(constants.LogSucceededWebhookCount, len(webhooks)-len(failedWebhooks)).
+		Str(constants.LogCorrelationID, ctx.CorrelationID).
+		Str(constants.LogEntityID, feedTypeID).
+		Str(constants.LogGame, message.Game.String()).
+		Str(constants.LogLocale, message.Language.String()).
+		Int(constants.LogWebhookCount, len(feedWebhooks)).
+		Int(constants.LogSucceededWebhookCount, dispatched).
 		Msg("Feed published!")
-
-	// TODO treat failed webhooks
 }

@@ -1,26 +1,23 @@
 package notifiers
 
 import (
+	"time"
+
+	"github.com/bwmarrin/discordgo"
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/models/constants"
-	"github.com/kaellybot/kaelly-notifier/repositories/almanaxes"
-	"github.com/kaellybot/kaelly-notifier/repositories/feeds"
-	"github.com/kaellybot/kaelly-notifier/repositories/twitch"
-	"github.com/kaellybot/kaelly-notifier/repositories/youtube"
+	"github.com/kaellybot/kaelly-notifier/repositories/webhooks"
 	"github.com/kaellybot/kaelly-notifier/services/discord"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 )
 
-func New(broker amqp.MessageBroker, discordService discord.Service, almanaxRepo almanaxes.Repository,
-	feedRepo feeds.Repository, twitchRepo twitch.Repository, youtubeRepo youtube.Repository) *Impl {
+func New(broker amqp.MessageBroker, discordService discord.Service,
+	webhookRepo webhooks.Repository) *Impl {
 	return &Impl{
 		broker:               broker,
 		discordService:       discordService,
-		almanaxRepo:          almanaxRepo,
-		feedRepo:             feedRepo,
-		twitchRepo:           twitchRepo,
-		youtubeRepo:          youtubeRepo,
+		webhookRepo:          webhookRepo,
 		internalWebhookID:    viper.GetString(constants.DiscordWebhookID),
 		internalWebhookToken: viper.GetString(constants.DiscordWebhookToken),
 	}
@@ -57,4 +54,69 @@ func (service *Impl) consume(ctx amqp.Context, message *amqp.RabbitMQMessage) {
 			Str(constants.LogCorrelationID, ctx.CorrelationID).
 			Msgf("Type not recognized, request ignored")
 	}
+}
+
+func (service *Impl) dispatch(content *discordgo.WebhookParams, webhookModel any,
+	webhooks []*constants.Webhook) int {
+	var dispatched int
+	updatedWebhooks := make([]*constants.Webhook, 0)
+	excludedWebhooks := make([]*constants.Webhook, 0)
+
+	// Try dispatching content through webhooks.
+	for _, webhook := range webhooks {
+		errPub := service.discordService.
+			PublishWebhook(webhook.WebhookID, webhook.WebhookToken, content)
+
+		if errPub != nil {
+			log.Warn().Err(errPub).
+				Str(constants.LogWebhookID, webhook.WebhookID).
+				Msgf("Applying failure policy on feed webhook and continue...")
+
+			if toKeep, updatedWebhook := service.applyFailurePolicy(webhook); toKeep {
+				webhook = updatedWebhook
+				updatedWebhooks = append(updatedWebhooks, webhook)
+			} else {
+				excludedWebhooks = append(excludedWebhooks, webhook)
+			}
+		} else {
+			dispatched++
+			toUpdate, updatedWebhook := service.applySuccessPolicy(webhook)
+			if toUpdate {
+				updatedWebhooks = append(updatedWebhooks, updatedWebhook)
+			}
+		}
+	}
+
+	// Updating webhooks which failed and errored webhooks which succeed this time.
+	errUpdate := service.webhookRepo.UpdateWebhooks(webhookModel, updatedWebhooks)
+	if errUpdate != nil {
+		log.Error().Err(errUpdate).
+			Msgf("Cannot update webhooks, ignoring them for this time")
+	}
+
+	errDel := service.webhookRepo.DeleteWebhooks(webhookModel, excludedWebhooks)
+	if errDel != nil {
+		log.Error().Err(errDel).
+			Msgf("Cannot remove unreachable webhooks, ignoring them for this time")
+	}
+
+	return dispatched
+}
+
+func (service *Impl) applySuccessPolicy(webhook *constants.Webhook) (bool, *constants.Webhook) {
+	if webhook.RetryNumber != 0 {
+		webhook.RetryNumber = 0
+		return true, webhook
+	}
+	return false, webhook
+}
+
+func (service *Impl) applyFailurePolicy(webhook *constants.Webhook) (bool, *constants.Webhook) {
+	if webhook.UpdatedAt.Add(constants.Delta).Before(time.Now()) {
+		webhook.RetryNumber++
+		if webhook.RetryNumber >= constants.MaxRetry {
+			return false, webhook
+		}
+	}
+	return true, webhook
 }
