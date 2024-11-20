@@ -2,6 +2,9 @@ package mappers
 
 import (
 	"bytes"
+	"context"
+	"fmt"
+	"path"
 	"regexp"
 	"strings"
 	"time"
@@ -10,6 +13,8 @@ import (
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/models/constants"
 	"github.com/kaellybot/kaelly-notifier/utils/discord"
+	"github.com/kaellybot/kaelly-notifier/utils/images"
+	"github.com/rs/zerolog/log"
 	"golang.org/x/net/html"
 )
 
@@ -18,6 +23,7 @@ var (
 )
 
 func MapFeed(rssMessage *amqp.NewsRSSMessage, locale amqp.Language) *discordgo.WebhookParams {
+	imageEmbed, files := retrieveImage(rssMessage.IconUrl)
 	return &discordgo.WebhookParams{
 		Embeds: []*discordgo.MessageEmbed{
 			{
@@ -31,14 +37,42 @@ func MapFeed(rssMessage *amqp.NewsRSSMessage, locale amqp.Language) *discordgo.W
 				Thumbnail: &discordgo.MessageEmbedThumbnail{
 					URL: constants.RSSLogo,
 				},
-				Image: &discordgo.MessageEmbedImage{
-					URL: rssMessage.IconUrl, // TODO Image must be downloaded
-				},
+				Image:     imageEmbed,
 				Timestamp: rssMessage.Date.AsTime().Format(time.RFC3339),
 				Footer:    discord.BuildDefaultFooter(constants.MapAMQPLocale(locale)),
 			},
 		},
+		Files: files,
 	}
+}
+
+func retrieveImage(url string) (*discordgo.MessageEmbedImage, []*discordgo.File) {
+	var imageEmbed *discordgo.MessageEmbedImage
+	var files []*discordgo.File
+
+	if url != "" {
+		filename := path.Base(url)
+		buffer, errGetImg := images.GetImageFromURL(context.Background(), url)
+		if errGetImg != nil {
+			log.Warn().Err(errGetImg).
+				Str(constants.LogImageURL, url).
+				Msgf("Cannot retrieve image, continuing without it")
+			return imageEmbed, files
+		}
+
+		imageEmbed = &discordgo.MessageEmbedImage{
+			URL: fmt.Sprintf("attachment://%v", filename),
+		}
+
+		files = []*discordgo.File{
+			{
+				Name:   filename,
+				Reader: bytes.NewReader(buffer.Bytes()),
+			},
+		}
+	}
+
+	return imageEmbed, files
 }
 
 func mapHTMLToDiscordMarkdown(input string, limit int) string {

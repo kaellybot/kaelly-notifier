@@ -9,6 +9,7 @@ const (
 	LogEntityID              = "entityID"
 	LogFileName              = "fileName"
 	LogGame                  = "game"
+	LogImageURL              = "imageURL"
 	LogLocale                = "locale"
 	LogWebhookID             = "webhookID"
 
