@@ -2,6 +2,7 @@ package notifiers
 
 import (
 	"github.com/bwmarrin/discordgo"
+	"github.com/go-co-op/gocron/v2"
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/models/constants"
 	"github.com/kaellybot/kaelly-notifier/repositories/webhooks"
@@ -10,15 +11,25 @@ import (
 	"github.com/spf13/viper"
 )
 
-func New(broker amqp.MessageBroker, discordService discord.Service,
-	webhookRepo webhooks.Repository) *Impl {
-	return &Impl{
+func New(broker amqp.MessageBroker, scheduler gocron.Scheduler,
+	discordService discord.Service, webhookRepo webhooks.Repository) (*Impl, error) {
+	service := Impl{
 		broker:               broker,
 		discordService:       discordService,
 		webhookRepo:          webhookRepo,
 		internalWebhookID:    viper.GetString(constants.DiscordWebhookID),
 		internalWebhookToken: viper.GetString(constants.DiscordWebhookToken),
 	}
+	_, errJob := scheduler.NewJob(
+		gocron.CronJob(viper.GetString(constants.WebhookPurgeCronTab), true),
+		gocron.NewTask(func() { service.purgeWebhooks() }),
+		gocron.WithName("Purge unused webhooks"),
+	)
+	if errJob != nil {
+		return nil, errJob
+	}
+
+	return &service, nil
 }
 
 func GetBinding() amqp.Binding {
@@ -69,4 +80,8 @@ func (service *Impl) dispatch(content *discordgo.WebhookParams, webhooks []*cons
 	}
 
 	return dispatched
+}
+
+func (service *Impl) purgeWebhooks() {
+	//TODO
 }

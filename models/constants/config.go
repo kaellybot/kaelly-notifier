@@ -35,6 +35,9 @@ const (
 	// Thread pool number, dedicated to dispatch news.
 	ThreadPool = "THREAD_POOL"
 
+	// Cron tab to purge unused webhooks.
+	WebhookPurgeCronTab = "WEBHOOK_PURGE_CRON_TAB"
+
 	// Probe port.
 	ProbePort = "PROBE_PORT"
 
@@ -56,6 +59,7 @@ const (
 	defaultMySQLDatabase       = "kaellybot"
 	defaultRabbitMQAddress     = "amqp://localhost:5672"
 	defaultThreadPool          = 10
+	defaultWebhookPurgeCronTab = "0 0 2 * * *"
 	defaultProbePort           = 9090
 	defaultMetricPort          = 2112
 	defaultLogLevel            = zerolog.InfoLevel
@@ -73,6 +77,7 @@ func GetDefaultConfigValues() map[string]any {
 		MySQLDatabase:       defaultMySQLDatabase,
 		RabbitMQAddress:     defaultRabbitMQAddress,
 		ThreadPool:          defaultThreadPool,
+		WebhookPurgeCronTab: defaultWebhookPurgeCronTab,
 		ProbePort:           defaultProbePort,
 		MetricPort:          defaultMetricPort,
 		LogLevel:            defaultLogLevel.String(),

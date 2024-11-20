@@ -1,6 +1,9 @@
 package application
 
 import (
+	"time"
+
+	"github.com/go-co-op/gocron/v2"
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/models/constants"
 	"github.com/kaellybot/kaelly-notifier/repositories/webhooks"
@@ -20,20 +23,29 @@ func New() (*Impl, error) {
 	probes := insights.NewProbes(broker.IsConnected, db.IsConnected)
 	prom := insights.NewPrometheusMetrics()
 
+	scheduler, errScheduler := gocron.NewScheduler(gocron.WithLocation(time.UTC))
+	if errScheduler != nil {
+		return nil, errScheduler
+	}
+
 	// Repositories
 	webhooksRepo := webhooks.New(db)
 
 	// services
 	discordService, errDisc := discord.New(viper.GetString(constants.DiscordToken))
 	if errDisc != nil {
-		log.Fatal().Err(errDisc).Msgf("Discord connection failed, shutting down.")
+		return nil, errDisc
 	}
 
-	notifierService := notifiers.New(broker, discordService, webhooksRepo)
+	notifierService, errNotif := notifiers.New(broker, scheduler, discordService, webhooksRepo)
+	if errNotif != nil {
+		return nil, errNotif
+	}
 
 	return &Impl{
 		broker:          broker,
 		db:              db,
+		scheduler:       scheduler,
 		probes:          probes,
 		prom:            prom,
 		discordService:  discordService,
@@ -53,11 +65,23 @@ func (app *Impl) Run() error {
 		return err
 	}
 
+	app.scheduler.Start()
+	for _, job := range app.scheduler.Jobs() {
+		scheduledTime, err := job.NextRun()
+		if err == nil {
+			log.Info().Msgf("%v scheduled at %v", job.Name(), scheduledTime)
+		}
+	}
+
 	app.notifierService.Consume()
 	return nil
 }
 
 func (app *Impl) Shutdown() {
+	if err := app.scheduler.Shutdown(); err != nil {
+		log.Error().Err(err).Msg("Cannot shutdown scheduler, continuing...")
+	}
+
 	app.broker.Shutdown()
 	app.db.Shutdown()
 	app.prom.Shutdown()

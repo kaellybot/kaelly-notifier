@@ -1,6 +1,7 @@
 package application
 
 import (
+	"github.com/go-co-op/gocron/v2"
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/services/discord"
 	"github.com/kaellybot/kaelly-notifier/services/notifiers"
@@ -16,6 +17,7 @@ type Application interface {
 type Impl struct {
 	broker          amqp.MessageBroker
 	db              databases.MySQLConnection
+	scheduler       gocron.Scheduler
 	probes          insights.Probes
 	prom            insights.PrometheusMetrics
 	discordService  discord.Service
