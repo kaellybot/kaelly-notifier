@@ -13,6 +13,7 @@ type Repository interface {
 	GetTwitchWebhooks(streamerID string) ([]*entities.WebhookTwitch, error)
 	GetTwitterWebhooks(twitterID string) ([]*entities.WebhookTwitter, error)
 	GetYoutubeWebhooks(videastID string) ([]*entities.WebhookYoutube, error)
+	GetWebhookIDs(model any) ([]string, error)
 	DeleteWebhooks(webhookIDs []string, model any) error
 }
 

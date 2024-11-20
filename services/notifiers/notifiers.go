@@ -5,6 +5,7 @@ import (
 	"github.com/go-co-op/gocron/v2"
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/models/constants"
+	"github.com/kaellybot/kaelly-notifier/models/entities"
 	"github.com/kaellybot/kaelly-notifier/repositories/webhooks"
 	"github.com/kaellybot/kaelly-notifier/services/discord"
 	"github.com/rs/zerolog/log"
@@ -83,5 +84,47 @@ func (service *Impl) dispatch(content *discordgo.WebhookParams, webhooks []*cons
 }
 
 func (service *Impl) purgeWebhooks() {
-	//TODO
+	log.Info().Msgf("Purging unused webhooks...")
+
+	models := []any{
+		&entities.WebhookAlmanax{},
+		&entities.WebhookFeed{},
+		&entities.WebhookTwitch{},
+		&entities.WebhookTwitter{},
+		&entities.WebhookYoutube{},
+	}
+
+	var purged int
+	for _, model := range models {
+		purged += service.purgeWebhookByTypes(model)
+	}
+
+	log.Info().
+		Int(constants.LogEntityCount, purged).
+		Msg("Webhooks purged!")
+}
+
+func (service *Impl) purgeWebhookByTypes(model any) int {
+	webhookIDs, errGet := service.webhookRepo.GetWebhookIDs(model)
+	if errGet != nil {
+		log.Warn().Err(errGet).
+			Msg("Cannot retrieve webhooks from DB, ignoring...")
+		return 0
+	}
+
+	purgedWebhookIDs := make([]string, 0)
+	for _, webhookID := range webhookIDs {
+		if !service.discordService.IsWebhookAvailable(webhookID) {
+			purgedWebhookIDs = append(purgedWebhookIDs, webhookID)
+		}
+	}
+
+	errDel := service.webhookRepo.DeleteWebhooks(purgedWebhookIDs, model)
+	if errDel != nil {
+		log.Warn().Err(errDel).
+			Msg("Cannot delete unused webhooks from DB, ignoring...")
+		return 0
+	}
+
+	return len(purgedWebhookIDs)
 }

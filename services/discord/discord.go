@@ -1,7 +1,11 @@
 package discord
 
 import (
+	"errors"
+	"net/http"
+
 	"github.com/bwmarrin/discordgo"
+	"github.com/kaellybot/kaelly-notifier/models/constants"
 	"github.com/rs/zerolog/log"
 )
 
@@ -22,10 +26,26 @@ func (service *Impl) PublishWebhook(webhookID, webhookToken string,
 	_, err := service.session.WebhookExecute(
 		webhookID,
 		webhookToken,
-		false, // Wait for webhook response to handle properly errors.
+		false, // No need to wait for webhook response.
 		content,
 	)
 	return err
+}
+
+func (service *Impl) IsWebhookAvailable(webhookID string) bool {
+	_, err := service.session.Webhook(webhookID)
+	if err != nil {
+		var httpErr *discordgo.RESTError
+		if errors.As(err, &httpErr) && httpErr.Response.StatusCode == http.StatusNotFound {
+			return false
+		}
+		log.Warn().Err(err).
+			Str(constants.LogWebhookID, webhookID).
+			Msg("Ignoring it this time...")
+		return true
+	}
+
+	return true
 }
 
 func (service *Impl) Shutdown() {

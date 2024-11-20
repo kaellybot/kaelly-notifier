@@ -7,6 +7,7 @@ import (
 type Service interface {
 	PublishWebhook(webhookID, webhookToken string,
 		content *discordgo.WebhookParams) error
+	IsWebhookAvailable(webhookID string) bool
 	Shutdown()
 }
 

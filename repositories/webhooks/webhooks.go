@@ -74,6 +74,19 @@ func (repo *Impl) GetYoutubeWebhooks(videastID string) ([]*entities.WebhookYoutu
 	return webhooks, nil
 }
 
+func (repo *Impl) GetWebhookIDs(model any) ([]string, error) {
+	var webhookIDs []string
+	err := repo.db.GetDB().
+		Select("webhook_id").
+		Model(model).
+		Find(&webhookIDs).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return webhookIDs, nil
+}
+
 func (repo *Impl) DeleteWebhooks(webhookIDs []string, model any) error {
 	return repo.db.GetDB().Transaction(func(tx *gorm.DB) error {
 		for _, ID := range webhookIDs {
