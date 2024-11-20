@@ -96,7 +96,7 @@ func (repo *Impl) UpdateWebhooks(model any, webhooks []*constants.Webhook) error
 func (repo *Impl) DeleteWebhooks(model any, webhooks []*constants.Webhook) error {
 	return repo.db.GetDB().Transaction(func(tx *gorm.DB) error {
 		for _, wh := range webhooks {
-			err := tx.Model(model).Delete("webhook_id = ?", wh.WebhookID).Error
+			err := tx.Where("webhook_id = ?", wh.WebhookID).Delete(model).Error
 			if err != nil {
 				return err
 			}

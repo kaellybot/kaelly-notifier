@@ -68,10 +68,6 @@ func (service *Impl) dispatch(content *discordgo.WebhookParams, webhookModel any
 			PublishWebhook(webhook.WebhookID, webhook.WebhookToken, content)
 
 		if errPub != nil {
-			log.Warn().Err(errPub).
-				Str(constants.LogWebhookID, webhook.WebhookID).
-				Msgf("Applying failure policy on feed webhook and continue...")
-
 			if toKeep, updatedWebhook := service.applyFailurePolicy(webhook); toKeep {
 				webhook = updatedWebhook
 				updatedWebhooks = append(updatedWebhooks, webhook)
@@ -101,7 +97,8 @@ func (service *Impl) dispatch(content *discordgo.WebhookParams, webhookModel any
 }
 
 func (service *Impl) applySuccessPolicy(webhook *constants.Webhook) *constants.Webhook {
-	webhook.PublishedAt = time.Now()
+	now := time.Now()
+	webhook.PublishedAt = &now
 	if webhook.RetryNumber != 0 {
 		webhook.RetryNumber = 0
 		return webhook
@@ -111,9 +108,9 @@ func (service *Impl) applySuccessPolicy(webhook *constants.Webhook) *constants.W
 
 func (service *Impl) applyFailurePolicy(webhook *constants.Webhook) (bool, *constants.Webhook) {
 	now := time.Now()
-	if webhook.FailedAt.Add(constants.Delta).Before(time.Now()) {
+	if webhook.FailedAt == nil || webhook.FailedAt.Add(constants.Delta).Before(time.Now()) {
 		webhook.RetryNumber++
-		webhook.FailedAt = now
+		webhook.FailedAt = &now
 		if webhook.RetryNumber >= constants.MaxRetry {
 			return false, webhook
 		}

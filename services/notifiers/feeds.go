@@ -9,6 +9,9 @@ import (
 )
 
 func (service *Impl) feedNews(ctx amqp.Context, message *amqp.RabbitMQMessage) {
+	service.lock.Lock()
+	defer service.lock.Unlock()
+
 	feedTypeID := message.NewsRSSMessage.Type
 	feedWebhooks, errGet := service.webhookRepo.
 		GetFeedWebhooks(feedTypeID, message.Game, message.Language)

@@ -1,6 +1,8 @@
 package notifiers
 
 import (
+	"sync"
+
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/repositories/webhooks"
 	"github.com/kaellybot/kaelly-notifier/services/discord"
@@ -21,4 +23,5 @@ type Impl struct {
 	webhookRepo          webhooks.Repository
 	internalWebhookID    string
 	internalWebhookToken string
+	lock                 sync.Mutex
 }

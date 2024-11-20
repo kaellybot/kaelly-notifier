@@ -11,6 +11,9 @@ import (
 )
 
 func (service *Impl) almanaxNews(ctx amqp.Context, message *amqp.RabbitMQMessage) {
+	service.lock.Lock()
+	defer service.lock.Unlock()
+
 	almanaxes := message.NewsAlmanaxMessage.Almanaxes
 
 	var wg sync.WaitGroup

@@ -9,6 +9,9 @@ import (
 )
 
 func (service *Impl) twitterNews(ctx amqp.Context, message *amqp.RabbitMQMessage) {
+	service.lock.Lock()
+	defer service.lock.Unlock()
+
 	twitterAccountID := message.NewsTwitterMessage.TwitterId
 	twitterWebhooks, errGet := service.webhookRepo.GetTwitterWebhooks(twitterAccountID)
 	if errGet != nil {
