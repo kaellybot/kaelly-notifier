@@ -11,8 +11,6 @@ func MapSetNews(setNews *amqp.NewsSetMessage, game amqp.Game,
 	locale amqp.Language) *discordgo.WebhookParams {
 	lg := constants.MapAMQPLocale(locale)
 	return &discordgo.WebhookParams{
-		Username:  constants.ExternalName,
-		AvatarURL: constants.AvatarURL,
 		Content: i18n.Get(lg, "set.message", i18n.Vars{
 			"game":             constants.GetGame(game).Name,
 			"missingSetNumber": setNews.MissingSetNumber,

@@ -6,6 +6,6 @@
         "message": "{{ if gt .missingSetNumber 0 }}*Missing {{ .game }} set thumbnail{{ if gt .missingSetNumber 1 }}s{{ end }}: **{{ .missingSetNumber }}**\n* Built thumbnail{{ if gt .builtSetNumber 1 }}s{{ end }}: **{{ .builtSetNumber }}**{{ else }}No missing {{ .game }} set thumbnail!{{ end }}"
     },
     "default": {
-        "footer": "{{ .name }} v{{ .version }} • Automatic message"
+        "footer": "Automatic message"
     }   
 }
