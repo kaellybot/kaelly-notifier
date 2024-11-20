@@ -80,10 +80,7 @@ func (service *Impl) dispatch(content *discordgo.WebhookParams, webhookModel any
 			}
 		} else {
 			dispatched++
-			toUpdate, updatedWebhook := service.applySuccessPolicy(webhook)
-			if toUpdate {
-				updatedWebhooks = append(updatedWebhooks, updatedWebhook)
-			}
+			updatedWebhooks = append(updatedWebhooks, service.applySuccessPolicy(webhook))
 		}
 	}
 
@@ -103,17 +100,20 @@ func (service *Impl) dispatch(content *discordgo.WebhookParams, webhookModel any
 	return dispatched
 }
 
-func (service *Impl) applySuccessPolicy(webhook *constants.Webhook) (bool, *constants.Webhook) {
+func (service *Impl) applySuccessPolicy(webhook *constants.Webhook) *constants.Webhook {
+	webhook.PublishedAt = time.Now()
 	if webhook.RetryNumber != 0 {
 		webhook.RetryNumber = 0
-		return true, webhook
+		return webhook
 	}
-	return false, webhook
+	return webhook
 }
 
 func (service *Impl) applyFailurePolicy(webhook *constants.Webhook) (bool, *constants.Webhook) {
-	if webhook.UpdatedAt.Add(constants.Delta).Before(time.Now()) {
+	now := time.Now()
+	if webhook.FailedAt.Add(constants.Delta).Before(time.Now()) {
 		webhook.RetryNumber++
+		webhook.FailedAt = now
 		if webhook.RetryNumber >= constants.MaxRetry {
 			return false, webhook
 		}

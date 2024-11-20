@@ -1,12 +1,11 @@
 package webhooks
 
 import (
-	"errors"
-
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/models/constants"
 	"github.com/kaellybot/kaelly-notifier/models/entities"
 	"github.com/kaellybot/kaelly-notifier/utils/databases"
+	"gorm.io/gorm"
 )
 
 func New(db databases.MySQLConnection) *Impl {
@@ -77,19 +76,31 @@ func (repo *Impl) GetYoutubeWebhooks(videastID string) ([]*entities.WebhookYoutu
 }
 
 func (repo *Impl) UpdateWebhooks(model any, webhooks []*constants.Webhook) error {
-	var err error
-	for _, wh := range webhooks {
-		webhook := wh
-		err = errors.Join(err, repo.db.GetDB().Model(model).Updates(webhook).Error)
-	} // TODO
-	return err
+	return repo.db.GetDB().Transaction(func(tx *gorm.DB) error {
+		for _, wh := range webhooks {
+			err := tx.Model(model).
+				Where("webhook_id = ?", wh.WebhookID).
+				Updates(map[string]any{
+					"retry_number": wh.RetryNumber,
+					"failed_at":    wh.FailedAt,
+					"published_at": wh.PublishedAt,
+				}).Error
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
 
 func (repo *Impl) DeleteWebhooks(model any, webhooks []*constants.Webhook) error {
-	var err error
-	for _, wh := range webhooks {
-		webhook := wh
-		err = errors.Join(err, repo.db.GetDB().Model(model).Delete(webhook).Error)
-	} // TODO
-	return err
+	return repo.db.GetDB().Transaction(func(tx *gorm.DB) error {
+		for _, wh := range webhooks {
+			err := tx.Model(model).Delete("webhook_id = ?", wh.WebhookID).Error
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
