@@ -3,7 +3,6 @@ package notifiers
 import (
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/models/constants"
-	"github.com/kaellybot/kaelly-notifier/models/entities"
 	"github.com/kaellybot/kaelly-notifier/models/mappers"
 	"github.com/rs/zerolog/log"
 )
@@ -31,7 +30,7 @@ func (service *Impl) feedNews(ctx amqp.Context, message *amqp.RabbitMQMessage) {
 		webhooks = append(webhooks, &feedWebhook.Webhook)
 	}
 
-	dispatched := service.dispatch(content, &entities.WebhookFeed{}, webhooks)
+	dispatched := service.dispatch(content, webhooks)
 	log.Info().
 		Str(constants.LogCorrelationID, ctx.CorrelationID).
 		Str(constants.LogEntityID, feedTypeID).

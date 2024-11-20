@@ -22,7 +22,7 @@ func (service *Impl) PublishWebhook(webhookID, webhookToken string,
 	_, err := service.session.WebhookExecute(
 		webhookID,
 		webhookToken,
-		true, // Wait for webhook response to handle properly errors.
+		false, // Wait for webhook response to handle properly errors.
 		content,
 	)
 	return err

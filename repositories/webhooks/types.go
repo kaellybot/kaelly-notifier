@@ -2,7 +2,6 @@ package webhooks
 
 import (
 	amqp "github.com/kaellybot/kaelly-amqp"
-	"github.com/kaellybot/kaelly-notifier/models/constants"
 	"github.com/kaellybot/kaelly-notifier/models/entities"
 	"github.com/kaellybot/kaelly-notifier/utils/databases"
 )
@@ -14,8 +13,7 @@ type Repository interface {
 	GetTwitchWebhooks(streamerID string) ([]*entities.WebhookTwitch, error)
 	GetTwitterWebhooks(twitterID string) ([]*entities.WebhookTwitter, error)
 	GetYoutubeWebhooks(videastID string) ([]*entities.WebhookYoutube, error)
-	UpdateWebhooks(model any, webhooks []*constants.Webhook) error
-	DeleteWebhooks(model any, webhooks []*constants.Webhook) error
+	DeleteWebhooks(webhookIDs []string, model any) error
 }
 
 type Impl struct {

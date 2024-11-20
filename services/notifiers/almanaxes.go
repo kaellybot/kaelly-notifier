@@ -5,7 +5,6 @@ import (
 
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/models/constants"
-	"github.com/kaellybot/kaelly-notifier/models/entities"
 	"github.com/kaellybot/kaelly-notifier/models/mappers"
 	"github.com/rs/zerolog/log"
 )
@@ -47,7 +46,7 @@ func (service *Impl) dispatchAlmanax(ctx amqp.Context,
 		webhooks = append(webhooks, &almanaxWebhook.Webhook)
 	}
 
-	dispatched := service.dispatch(content, &entities.WebhookAlmanax{}, webhooks)
+	dispatched := service.dispatch(content, webhooks)
 	log.Info().
 		Str(constants.LogCorrelationID, ctx.CorrelationID).
 		Str(constants.LogGame, game.String()).

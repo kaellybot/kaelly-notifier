@@ -1,8 +1,6 @@
 package notifiers
 
 import (
-	"time"
-
 	"github.com/bwmarrin/discordgo"
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/models/constants"
@@ -56,64 +54,19 @@ func (service *Impl) consume(ctx amqp.Context, message *amqp.RabbitMQMessage) {
 	}
 }
 
-func (service *Impl) dispatch(content *discordgo.WebhookParams, webhookModel any,
-	webhooks []*constants.Webhook) int {
+func (service *Impl) dispatch(content *discordgo.WebhookParams, webhooks []*constants.Webhook) int {
 	var dispatched int
-	updatedWebhooks := make([]*constants.Webhook, 0)
-	excludedWebhooks := make([]*constants.Webhook, 0)
-
-	// Try dispatching content through webhooks.
 	for _, webhook := range webhooks {
 		errPub := service.discordService.
 			PublishWebhook(webhook.WebhookID, webhook.WebhookToken, content)
-
 		if errPub != nil {
-			if toKeep, updatedWebhook := service.applyFailurePolicy(webhook); toKeep {
-				webhook = updatedWebhook
-				updatedWebhooks = append(updatedWebhooks, webhook)
-			} else {
-				excludedWebhooks = append(excludedWebhooks, webhook)
-			}
-		} else {
-			dispatched++
-			updatedWebhooks = append(updatedWebhooks, service.applySuccessPolicy(webhook))
+			log.Debug().Err(errPub).
+				Msgf("Could not publish webhook, continuing...")
+			continue
 		}
-	}
 
-	// Updating webhooks which failed and errored webhooks which succeed this time.
-	errUpdate := service.webhookRepo.UpdateWebhooks(webhookModel, updatedWebhooks)
-	if errUpdate != nil {
-		log.Error().Err(errUpdate).
-			Msgf("Cannot update webhooks, ignoring them for this time")
-	}
-
-	errDel := service.webhookRepo.DeleteWebhooks(webhookModel, excludedWebhooks)
-	if errDel != nil {
-		log.Error().Err(errDel).
-			Msgf("Cannot remove unreachable webhooks, ignoring them for this time")
+		dispatched++
 	}
 
 	return dispatched
-}
-
-func (service *Impl) applySuccessPolicy(webhook *constants.Webhook) *constants.Webhook {
-	now := time.Now()
-	webhook.PublishedAt = &now
-	if webhook.RetryNumber != 0 {
-		webhook.RetryNumber = 0
-		return webhook
-	}
-	return webhook
-}
-
-func (service *Impl) applyFailurePolicy(webhook *constants.Webhook) (bool, *constants.Webhook) {
-	now := time.Now()
-	if webhook.FailedAt == nil || webhook.FailedAt.Add(constants.Delta).Before(time.Now()) {
-		webhook.RetryNumber++
-		webhook.FailedAt = &now
-		if webhook.RetryNumber >= constants.MaxRetry {
-			return false, webhook
-		}
-	}
-	return true, webhook
 }
