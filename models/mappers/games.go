@@ -9,9 +9,9 @@ import (
 
 func MapGameNews(gameNews *amqp.NewsGameMessage, game amqp.Game,
 	locale amqp.Language) *discordgo.WebhookParams {
-	lg := constants.MapAMQPLocale(locale)
+	lg := constants.GetLanguage(locale)
 	return &discordgo.WebhookParams{
-		Content: i18n.Get(lg, "game.message", i18n.Vars{
+		Content: i18n.Get(lg.Locale, "game.message", i18n.Vars{
 			"game":    constants.GetGame(game).Name,
 			"version": gameNews.Version,
 		}),

@@ -6,8 +6,10 @@ import (
 	"github.com/go-co-op/gocron/v2"
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/models/constants"
+	emojiRepo "github.com/kaellybot/kaelly-notifier/repositories/emojis"
 	"github.com/kaellybot/kaelly-notifier/repositories/webhooks"
 	"github.com/kaellybot/kaelly-notifier/services/discord"
+	"github.com/kaellybot/kaelly-notifier/services/emojis"
 	"github.com/kaellybot/kaelly-notifier/services/notifiers"
 	"github.com/kaellybot/kaelly-notifier/utils/databases"
 	"github.com/kaellybot/kaelly-notifier/utils/insights"
@@ -19,7 +21,12 @@ func New() (*Impl, error) {
 	// misc
 	broker := amqp.New(constants.RabbitMQClientID, viper.GetString(constants.RabbitMQAddress),
 		amqp.WithBindings(notifiers.GetBinding()))
+
 	db := databases.New()
+	if err := db.Run(); err != nil {
+		return nil, err
+	}
+
 	probes := insights.NewProbes(broker.IsConnected, db.IsConnected)
 	prom := insights.NewPrometheusMetrics()
 
@@ -30,6 +37,7 @@ func New() (*Impl, error) {
 
 	// Repositories
 	webhooksRepo := webhooks.New(db)
+	emojiRepo := emojiRepo.New(db)
 
 	// services
 	discordService, errDisc := discord.New(viper.GetString(constants.DiscordToken))
@@ -37,7 +45,13 @@ func New() (*Impl, error) {
 		return nil, errDisc
 	}
 
-	notifierService, errNotif := notifiers.New(broker, scheduler, discordService, webhooksRepo)
+	emojiService, errEmoji := emojis.New(emojiRepo)
+	if errEmoji != nil {
+		return nil, errEmoji
+	}
+
+	notifierService, errNotif := notifiers.New(broker, scheduler, discordService,
+		emojiService, webhooksRepo)
 	if errNotif != nil {
 		return nil, errNotif
 	}
@@ -56,10 +70,6 @@ func New() (*Impl, error) {
 func (app *Impl) Run() error {
 	app.probes.ListenAndServe()
 	app.prom.ListenAndServe()
-
-	if err := app.db.Run(); err != nil {
-		return err
-	}
 
 	if err := app.broker.Run(); err != nil {
 		return err

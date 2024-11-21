@@ -8,9 +8,6 @@ import (
 )
 
 func (service *Impl) feedNews(ctx amqp.Context, message *amqp.RabbitMQMessage) {
-	service.lock.Lock()
-	defer service.lock.Unlock()
-
 	feedTypeID := message.NewsRSSMessage.Type
 	feedWebhooks, errGet := service.webhookRepo.
 		GetFeedWebhooks(feedTypeID, message.Game, message.Language)
@@ -37,6 +34,6 @@ func (service *Impl) feedNews(ctx amqp.Context, message *amqp.RabbitMQMessage) {
 		Str(constants.LogGame, message.Game.String()).
 		Str(constants.LogLocale, message.Language.String()).
 		Int(constants.LogWebhookCount, len(feedWebhooks)).
-		Int(constants.LogSucceededWebhookCount, dispatched).
+		Int(constants.LogDispatchCount, dispatched).
 		Msg("Feed published!")
 }

@@ -10,9 +10,6 @@ import (
 )
 
 func (service *Impl) almanaxNews(ctx amqp.Context, message *amqp.RabbitMQMessage) {
-	service.lock.Lock()
-	defer service.lock.Unlock()
-
 	almanaxes := message.NewsAlmanaxMessage.Almanaxes
 
 	var wg sync.WaitGroup
@@ -20,7 +17,7 @@ func (service *Impl) almanaxNews(ctx amqp.Context, message *amqp.RabbitMQMessage
 	for _, almanax := range almanaxes {
 		go func() {
 			defer wg.Done()
-			service.dispatchAlmanax(ctx, almanax, message.Game)
+			service.dispatchAlmanax(ctx, almanax, message.NewsAlmanaxMessage.Source, message.Game)
 		}()
 	}
 
@@ -28,7 +25,7 @@ func (service *Impl) almanaxNews(ctx amqp.Context, message *amqp.RabbitMQMessage
 }
 
 func (service *Impl) dispatchAlmanax(ctx amqp.Context,
-	almanax *amqp.NewsAlmanaxMessage_I18NAlmanax, game amqp.Game) {
+	almanax *amqp.NewsAlmanaxMessage_I18NAlmanax, source *amqp.Source, game amqp.Game) {
 	almanaxWebhooks, errGet := service.webhookRepo.
 		GetAlmanaxWebhooks(game, almanax.Locale)
 	if errGet != nil {
@@ -40,7 +37,7 @@ func (service *Impl) dispatchAlmanax(ctx amqp.Context,
 		return
 	}
 
-	content := mappers.MapAlmanax(almanax)
+	content := mappers.MapAlmanax(almanax, source, service.emojiService)
 	webhooks := make([]*constants.Webhook, 0)
 	for _, almanaxWebhook := range almanaxWebhooks {
 		webhooks = append(webhooks, &almanaxWebhook.Webhook)
@@ -52,6 +49,6 @@ func (service *Impl) dispatchAlmanax(ctx amqp.Context,
 		Str(constants.LogGame, game.String()).
 		Str(constants.LogLocale, almanax.Locale.String()).
 		Int(constants.LogWebhookCount, len(almanaxWebhooks)).
-		Int(constants.LogSucceededWebhookCount, dispatched).
+		Int(constants.LogDispatchCount, dispatched).
 		Msg("Almanax published!")
 }

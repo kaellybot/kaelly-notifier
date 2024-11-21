@@ -1,4 +1,19 @@
 {
+    "almanax": {
+        "title": "Almanax du {{ .date }}",
+        "bonus": {
+            "title": ":cyclone: Bonus"
+        },
+        "url": "https://www.krosmoz.com/fr/almanax/{{ .date }}",
+        "tribute": {
+            "title": ":bouquet: Offrande",
+            "description": "{{ .emoji }} **{{ .quantity }}**x {{ .item }}"
+        },
+        "reward": {
+            "title": ":moneybag: Gains",
+            "description": "**{{ .reward }}** {{ .kamaIcon }}"
+        }
+    },
     "game": {
         "message": "Je suis à jour avec la version **{{ .version }}** de {{ .game }} !"
     },
@@ -6,6 +21,6 @@
         "message": "{{ if gt .missingSetNumber 0 }}* Vignette{{ if gt .missingSetNumber 1 }}s{{ end }} de panoplie {{ .game }} manquante{{ if gt .missingSetNumber 1 }}s{{ end }} : **{{ .missingSetNumber }}**\n* Vignette{{ if gt .builtSetNumber 1 }}s{{ end }} fabriquée{{ if gt .builtSetNumber 1 }}s{{ end }} : **{{ .builtSetNumber }}**{{ else }}Aucune vignette de panoplie n'est manquante pour {{ .game }} !{{ end }}"
     },
     "default": {
-        "footer": "Message automatique"
+        "footer": "{{ .name }} • Message automatique{{ if .date }} • {{ .date }}{{ end }}"
     }
 }

@@ -8,15 +8,18 @@ import (
 	"github.com/kaellybot/kaelly-notifier/models/entities"
 	"github.com/kaellybot/kaelly-notifier/repositories/webhooks"
 	"github.com/kaellybot/kaelly-notifier/services/discord"
+	"github.com/kaellybot/kaelly-notifier/services/emojis"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 )
 
 func New(broker amqp.MessageBroker, scheduler gocron.Scheduler,
-	discordService discord.Service, webhookRepo webhooks.Repository) (*Impl, error) {
+	discordService discord.Service, emojiService emojis.Service,
+	webhookRepo webhooks.Repository) (*Impl, error) {
 	service := Impl{
 		broker:               broker,
 		discordService:       discordService,
+		emojiService:         emojiService,
 		webhookRepo:          webhookRepo,
 		internalWebhookID:    viper.GetString(constants.DiscordWebhookID),
 		internalWebhookToken: viper.GetString(constants.DiscordWebhookToken),

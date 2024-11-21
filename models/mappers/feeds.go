@@ -39,7 +39,7 @@ func MapFeed(rssMessage *amqp.NewsRSSMessage, locale amqp.Language) *discordgo.W
 				},
 				Image:     imageEmbed,
 				Timestamp: rssMessage.Date.AsTime().Format(time.RFC3339),
-				Footer:    discord.BuildDefaultFooter(constants.MapAMQPLocale(locale)),
+				Footer:    discord.BuildDefaultFooter(constants.GetLanguage(locale).Locale, ""),
 			},
 		},
 		Files: files,

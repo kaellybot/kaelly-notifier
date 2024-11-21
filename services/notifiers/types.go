@@ -1,11 +1,10 @@
 package notifiers
 
 import (
-	"sync"
-
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/repositories/webhooks"
 	"github.com/kaellybot/kaelly-notifier/services/discord"
+	"github.com/kaellybot/kaelly-notifier/services/emojis"
 )
 
 const (
@@ -20,8 +19,8 @@ type Service interface {
 type Impl struct {
 	broker               amqp.MessageBroker
 	discordService       discord.Service
+	emojiService         emojis.Service
 	webhookRepo          webhooks.Repository
 	internalWebhookID    string
 	internalWebhookToken string
-	lock                 sync.Mutex
 }
