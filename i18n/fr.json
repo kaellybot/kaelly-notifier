@@ -18,7 +18,7 @@
         "message": "Je suis à jour avec la version **{{ .version }}** de {{ .game }} !"
     },
     "set": {
-        "message": "{{ if gt .missingSetNumber 0 }}* Vignette{{ if gt .missingSetNumber 1 }}s{{ end }} de panoplie {{ .game }} manquante{{ if gt .missingSetNumber 1 }}s{{ end }} : **{{ .missingSetNumber }}**\n* Vignette{{ if gt .builtSetNumber 1 }}s{{ end }} fabriquée{{ if gt .builtSetNumber 1 }}s{{ end }} : **{{ .builtSetNumber }}**{{ else }}Aucune vignette de panoplie n'est manquante pour {{ .game }} !{{ end }}"
+        "message": "{{ if .sets }}Les vignettes de panoplies {{ .game }} sont manquantes pour les IDs suivants :\n{{ range .sets}} * {{ . }}\n{{ end }}{{ else }}Aucune vignette de panoplie n'est manquante pour {{ .game }} !{{ end }}"
     },
     "default": {
         "footer": "{{ .name }} • Message automatique{{ if .date }} • {{ .date }}{{ end }}"

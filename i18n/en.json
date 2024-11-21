@@ -18,7 +18,7 @@
         "message": "I am up-to-date with {{ .game }} **{{ .version }}**!"
     },
     "set": {
-        "message": "{{ if gt .missingSetNumber 0 }}* Missing {{ .game }} set thumbnail{{ if gt .missingSetNumber 1 }}s{{ end }}: **{{ .missingSetNumber }}**\n* Built thumbnail{{ if gt .builtSetNumber 1 }}s{{ end }}: **{{ .builtSetNumber }}**{{ else }}No missing {{ .game }} set thumbnail!{{ end }}"
+        "message": "{{ if .sets }}{{ .game }} thumbnails sets are missing for following IDs:\n{{ range .sets}} * {{ . }}\n{{ end }}{{ else }}{{ .game }} thumbnails sets are all up-to-date!{{ end }}"
     },
     "default": {
         "footer": "{{ .name }} • Automatic message{{ if .date }} • {{ .date }}{{ end }}"

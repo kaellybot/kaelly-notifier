@@ -12,9 +12,8 @@ func MapSetNews(setNews *amqp.NewsSetMessage, game amqp.Game,
 	lg := constants.GetLanguage(locale)
 	return &discordgo.WebhookParams{
 		Content: i18n.Get(lg.Locale, "set.message", i18n.Vars{
-			"game":             constants.GetGame(game).Name,
-			"missingSetNumber": setNews.MissingSetNumber,
-			"builtSetNumber":   setNews.BuiltSetNumber,
+			"game": constants.GetGame(game).Name,
+			"sets": setNews.SetIds,
 		}),
 	}
 }
