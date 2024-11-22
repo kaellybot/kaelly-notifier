@@ -69,21 +69,11 @@ func (service *Impl) consume(ctx amqp.Context, message *amqp.RabbitMQMessage) {
 	}
 }
 
-func (service *Impl) dispatch(content *discordgo.WebhookParams, webhooks []*constants.Webhook) int {
-	var dispatched int
+func (service *Impl) dispatch(correlationID string, content *discordgo.WebhookParams, webhooks []*constants.Webhook) {
 	for _, webhook := range webhooks {
-		errPub := service.discordService.
-			PublishWebhook(webhook.WebhookID, webhook.WebhookToken, content)
-		if errPub != nil {
-			log.Debug().Err(errPub).
-				Msgf("Could not publish webhook, continuing...")
-			continue
-		}
-
-		dispatched++
+		service.discordService.
+			PublishWebhook(correlationID, webhook.WebhookID, webhook.WebhookToken, content)
 	}
-
-	return dispatched
 }
 
 func (service *Impl) purgeWebhooks() {

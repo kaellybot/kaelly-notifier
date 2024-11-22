@@ -26,13 +26,12 @@ func (service *Impl) twitterNews(ctx amqp.Context, message *amqp.RabbitMQMessage
 		webhooks = append(webhooks, &twitterWebhook.Webhook)
 	}
 
-	dispatched := service.dispatch(content, webhooks)
+	service.dispatch(ctx.CorrelationID, content, webhooks)
 	log.Info().
 		Str(constants.LogCorrelationID, ctx.CorrelationID).
 		Str(constants.LogEntityID, twitterAccountID).
 		Str(constants.LogGame, message.Game.String()).
 		Str(constants.LogLocale, message.Language.String()).
 		Int(constants.LogWebhookCount, len(twitterWebhooks)).
-		Int(constants.LogDispatchCount, dispatched).
 		Msg("Tweet published!")
 }

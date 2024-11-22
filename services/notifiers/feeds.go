@@ -27,13 +27,12 @@ func (service *Impl) feedNews(ctx amqp.Context, message *amqp.RabbitMQMessage) {
 		webhooks = append(webhooks, &feedWebhook.Webhook)
 	}
 
-	dispatched := service.dispatch(content, webhooks)
+	service.dispatch(ctx.CorrelationID, content, webhooks)
 	log.Info().
 		Str(constants.LogCorrelationID, ctx.CorrelationID).
 		Str(constants.LogEntityID, feedTypeID).
 		Str(constants.LogGame, message.Game.String()).
 		Str(constants.LogLocale, message.Language.String()).
 		Int(constants.LogWebhookCount, len(feedWebhooks)).
-		Int(constants.LogDispatchCount, dispatched).
 		Msg("Feed published!")
 }

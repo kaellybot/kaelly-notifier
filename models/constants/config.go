@@ -32,8 +32,11 @@ const (
 	// RabbitMQ address.
 	RabbitMQAddress = "RABBITMQ_ADDRESS"
 
-	// Thread pool number, dedicated to dispatch news.
-	ThreadPool = "THREAD_POOL"
+	// Worker pool number, dedicated to execute tasks like dispatch news.
+	WorkerPool = "WORKER_POOL"
+
+	// Task buffer size, dedicated to buffer tasks when all worker are busy.
+	TaskBuffer = "TASK_BUFFER"
 
 	// Cron tab to purge unused webhooks.
 	WebhookPurgeCronTab = "WEBHOOK_PURGE_CRON_TAB"
@@ -58,7 +61,8 @@ const (
 	defaultMySQLPassword       = ""
 	defaultMySQLDatabase       = "kaellybot"
 	defaultRabbitMQAddress     = "amqp://localhost:5672"
-	defaultThreadPool          = 10
+	defaultWorkerPool          = 10
+	defaultTaskBuffer          = 20
 	defaultWebhookPurgeCronTab = "0 0 2 * * *"
 	defaultProbePort           = 9090
 	defaultMetricPort          = 2112
@@ -76,7 +80,8 @@ func GetDefaultConfigValues() map[string]any {
 		MySQLPassword:       defaultMySQLPassword,
 		MySQLDatabase:       defaultMySQLDatabase,
 		RabbitMQAddress:     defaultRabbitMQAddress,
-		ThreadPool:          defaultThreadPool,
+		WorkerPool:          defaultWorkerPool,
+		TaskBuffer:          defaultTaskBuffer,
 		WebhookPurgeCronTab: defaultWebhookPurgeCronTab,
 		ProbePort:           defaultProbePort,
 		MetricPort:          defaultMetricPort,

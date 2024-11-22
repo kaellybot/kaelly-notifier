@@ -43,12 +43,11 @@ func (service *Impl) dispatchAlmanax(ctx amqp.Context,
 		webhooks = append(webhooks, &almanaxWebhook.Webhook)
 	}
 
-	dispatched := service.dispatch(content, webhooks)
+	service.dispatch(ctx.CorrelationID, content, webhooks)
 	log.Info().
 		Str(constants.LogCorrelationID, ctx.CorrelationID).
 		Str(constants.LogGame, game.String()).
 		Str(constants.LogLocale, almanax.Locale.String()).
 		Int(constants.LogWebhookCount, len(almanaxWebhooks)).
-		Int(constants.LogDispatchCount, dispatched).
 		Msg("Almanax published!")
 }

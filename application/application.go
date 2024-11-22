@@ -11,6 +11,7 @@ import (
 	"github.com/kaellybot/kaelly-notifier/services/discord"
 	"github.com/kaellybot/kaelly-notifier/services/emojis"
 	"github.com/kaellybot/kaelly-notifier/services/notifiers"
+	"github.com/kaellybot/kaelly-notifier/services/workers"
 	"github.com/kaellybot/kaelly-notifier/utils/databases"
 	"github.com/kaellybot/kaelly-notifier/utils/insights"
 	"github.com/rs/zerolog/log"
@@ -40,7 +41,8 @@ func New() (*Impl, error) {
 	emojiRepo := emojiRepo.New(db)
 
 	// services
-	discordService, errDisc := discord.New(viper.GetString(constants.DiscordToken))
+	workerService := workers.New()
+	discordService, errDisc := discord.New(workerService)
 	if errDisc != nil {
 		return nil, errDisc
 	}
@@ -63,6 +65,7 @@ func New() (*Impl, error) {
 		probes:          probes,
 		prom:            prom,
 		discordService:  discordService,
+		workerService:   workerService,
 		notifierService: notifierService,
 	}, nil
 }
@@ -94,6 +97,8 @@ func (app *Impl) Shutdown() {
 
 	app.broker.Shutdown()
 	app.db.Shutdown()
+	app.workerService.Shutdown()
+	app.discordService.Shutdown()
 	app.prom.Shutdown()
 	app.probes.Shutdown()
 	log.Info().Msgf("Application is no longer running")
