@@ -17,6 +17,10 @@
     "game": {
         "message": "I am up-to-date with {{ .game }} **{{ .version }}**!"
     },
+    "guild": {
+        "create": "[NEW] **{{ .name }}**, +{{ .memberCount }} users",
+        "delete": "[LOSE] **{{ .name }}**, -{{ .memberCount }} users"
+    },
     "set": {
         "message": "{{ if .sets }}{{ .game }} thumbnails sets are missing for following IDs:\n{{ range .sets}} * {{ . }}\n{{ end }}{{ else }}{{ .game }} thumbnails sets are all up-to-date!{{ end }}"
     },

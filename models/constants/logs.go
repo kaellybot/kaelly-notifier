@@ -7,6 +7,7 @@ const (
 	LogEmojiType     = "emojiType"
 	LogEntityCount   = "entityCount"
 	LogEntityID      = "entityID"
+	LogEvent         = "event"
 	LogFileName      = "fileName"
 	LogGame          = "game"
 	LogImageURL      = "imageURL"

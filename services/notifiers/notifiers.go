@@ -56,6 +56,8 @@ func (service *Impl) consume(ctx amqp.Context, message *amqp.RabbitMQMessage) {
 		service.almanaxNews(ctx, message)
 	case amqp.RabbitMQMessage_NEWS_GAME:
 		service.gameNews(ctx, message)
+	case amqp.RabbitMQMessage_NEWS_GUILD:
+		service.guildNews(ctx, message)
 	case amqp.RabbitMQMessage_NEWS_RSS:
 		service.feedNews(ctx, message)
 	case amqp.RabbitMQMessage_NEWS_SET:
