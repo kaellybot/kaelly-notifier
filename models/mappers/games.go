@@ -7,11 +7,9 @@ import (
 	i18n "github.com/kaysoro/discordgo-i18n"
 )
 
-func MapGameNews(gameNews *amqp.NewsGameMessage, game amqp.Game,
-	locale amqp.Language) *discordgo.WebhookParams {
-	lg := constants.GetLanguage(locale)
+func MapGameNews(gameNews *amqp.NewsGameMessage, game amqp.Game) *discordgo.WebhookParams {
 	return &discordgo.WebhookParams{
-		Content: i18n.Get(lg.Locale, "game.message", i18n.Vars{
+		Content: i18n.Get(constants.InternalLocale, "game.message", i18n.Vars{
 			"game":    constants.GetGame(game).Name,
 			"version": gameNews.Version,
 		}),

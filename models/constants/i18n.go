@@ -34,6 +34,7 @@ const (
 
 	DefaultAMQPLocale = amqp.Language_EN
 	DefaultLocale     = discordgo.EnglishGB
+	InternalLocale    = discordgo.French
 )
 
 func GetLanguages() []Language {

@@ -13,9 +13,9 @@ func (service *Impl) guildNews(ctx amqp.Context, message *amqp.RabbitMQMessage) 
 	newsGuild := message.NewsGuildMessage
 	switch newsGuild.Event {
 	case amqp.NewsGuildMessage_CREATE:
-		content = mappers.MapGuildCreateNews(newsGuild, message.Language)
+		content = mappers.MapGuildCreateNews(newsGuild)
 	case amqp.NewsGuildMessage_DELETE:
-		content = mappers.MapGuildDeleteNews(newsGuild, message.Language)
+		content = mappers.MapGuildDeleteNews(newsGuild)
 	case amqp.NewsGuildMessage_UNKNOWN:
 		fallthrough
 	default:

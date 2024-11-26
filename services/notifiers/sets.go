@@ -6,7 +6,7 @@ import (
 )
 
 func (service *Impl) setNews(ctx amqp.Context, message *amqp.RabbitMQMessage) {
-	content := mappers.MapSetNews(message.NewsSetMessage, message.Game, message.Language)
+	content := mappers.MapSetNews(message.NewsSetMessage, message.Game)
 	service.discordService.PublishWebhook(ctx.CorrelationID, service.internalWebhookID,
 		service.internalWebhookToken, content)
 }
