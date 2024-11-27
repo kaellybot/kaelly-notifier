@@ -1,0 +1,30 @@
+{
+    "almanax": {
+        "title": "Almanax de {{ .date }}",
+        "bonus": {
+            "title": ":cyclone: Bonus"
+        },
+        "url": "https://www.krosmoz.com/es/almanax/{{ .date }}",
+        "tribute": {
+            "title": ":bouquet: Ofrenda",
+            "description": "{{ .emoji }} **{{ .quantity }}**x {{ .item }}"
+        },
+        "reward": {
+            "title": ":moneybag: Recompensas",
+            "description": "**{{ .reward }}** {{ .kamaIcon }}"
+        }
+    },
+    "game": {
+        "message": "¡Estoy actualizado con {{ .game }} **{{ .version }}**!"
+    },
+    "guild": {
+        "create": "[NUEVO] **{{ .name }}**, +{{ .memberCount }} usuarios",
+        "delete": "[PERDIDO] **{{ .name }}**, -{{ .memberCount }} usuarios"
+    },
+    "set": {
+        "message": "{{ if .sets }}Faltan miniaturas de conjuntos de {{ .game }} para los siguientes IDs:\n{{ range .sets}} * {{ . }}\n{{ end }}{{ else }}¡Todas las miniaturas de conjuntos de {{ .game }} están actualizadas!{{ end }}"
+    },
+    "default": {
+        "footer": "{{ .name }} • Mensaje automático{{ if .date }} • {{ .date }}{{ end }}"
+    }
+}

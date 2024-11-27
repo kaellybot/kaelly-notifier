@@ -1,0 +1,30 @@
+{
+    "almanax": {
+        "title": "Almanax vom {{ .date }}",
+        "bonus": {
+            "title": ":cyclone: Bonus"
+        },
+        "url": "https://www.krosmoz.com/de/almanax/{{ .date }}",
+        "tribute": {
+            "title": ":bouquet: Opfergabe",
+            "description": "{{ .emoji }} **{{ .quantity }}**x {{ .item }}"
+        },
+        "reward": {
+            "title": ":moneybag: Belohnungen",
+            "description": "**{{ .reward }}** {{ .kamaIcon }}"
+        }
+    },
+    "game": {
+        "message": "Ich bin auf dem neuesten Stand mit {{ .game }} **{{ .version }}**!"
+    },
+    "guild": {
+        "create": "[NEU] **{{ .name }}**, +{{ .memberCount }} Benutzer",
+        "delete": "[VERLUST] **{{ .name }}**, -{{ .memberCount }} Benutzer"
+    },
+    "set": {
+        "message": "{{ if .sets }}Die Thumbnails für {{ .game }} fehlen für folgende IDs:\n{{ range .sets}} * {{ . }}\n{{ end }}{{ else }}Alle Thumbnails für {{ .game }} sind auf dem neuesten Stand!{{ end }}"
+    },
+    "default": {
+        "footer": "{{ .name }} • Automatische Nachricht{{ if .date }} • {{ .date }}{{ end }}"
+    }
+}
