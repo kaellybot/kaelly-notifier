@@ -104,9 +104,9 @@ jobs:
             helm upgrade --install ${{ github.event.repository.name }} charts/${{ github.event.repository.name }} \
               --namespace kaellybot \
               --set image.tag="${{ env.image_tag_name }}" \
-              --set secrets.DISCORD_TOKEN="${{ secrets.DISCORD_TOKEN }}" \
-              --set secrets.DISCORD_WEBHOOK_ID="${{ secrets.DISCORD_WEBHOOK_ID }}" \
-              --set secrets.DISCORD_WEBHOOK_TOKEN="${{ secrets.DISCORD_WEBHOOK_TOKEN }}" \
+              --set-string secrets.DISCORD_TOKEN="${{ secrets.DISCORD_TOKEN }}" \
+              --set-string secrets.DISCORD_WEBHOOK_ID="${{ secrets.DISCORD_WEBHOOK_ID }}" \
+              --set-string secrets.DISCORD_WEBHOOK_TOKEN="${{ secrets.DISCORD_WEBHOOK_TOKEN }}" \
               --set secrets.MYSQL_URL="${{ secrets.MYSQL_URL }}" \
               --set secrets.MYSQL_USER="${{ secrets.MYSQL_USER }}" \
               --set secrets.MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}" \
