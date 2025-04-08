@@ -4,6 +4,7 @@ import "github.com/rs/zerolog"
 
 const (
 	LogCorrelationID = "correlationID"
+	LogChannelID     = "channelID"
 	LogEmojiType     = "emojiType"
 	LogEntityCount   = "entityCount"
 	LogEntityID      = "entityID"
@@ -13,8 +14,6 @@ const (
 	LogImageURL      = "imageURL"
 	LogLocale        = "locale"
 	LogPanic         = "panic"
-	LogWebhookCount  = "webhookCount"
-	LogWebhookID     = "webhookID"
 
 	LogLevelFallback = zerolog.InfoLevel
 )

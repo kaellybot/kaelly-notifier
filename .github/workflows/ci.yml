@@ -106,16 +106,12 @@ jobs:
               --create-namespace \
               --set image.tag="${{ env.image_tag_name }}" \
               --set-string secrets.DISCORD_TOKEN="${{ secrets.DISCORD_TOKEN }}" \
-              --set-string secrets.DISCORD_WEBHOOK_ID="${{ secrets.DISCORD_WEBHOOK_ID }}" \
-              --set-string secrets.DISCORD_WEBHOOK_TOKEN="${{ secrets.DISCORD_WEBHOOK_TOKEN }}" \
+              --set-string secrets.REPORTING_CHANNEL_ID="${{ secrets.REPORTING_CHANNEL_ID }}" \
               --set secrets.MYSQL_URL="${{ secrets.MYSQL_URL }}" \
               --set secrets.MYSQL_USER="${{ secrets.MYSQL_USER }}" \
               --set secrets.MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}" \
               --set secrets.MYSQL_DATABASE="${{ secrets.MYSQL_DATABASE }}" \
               --set secrets.RABBITMQ_ADDRESS="${{ secrets.RABBITMQ_ADDRESS }}" \
-              --set configMap.WORKER_POOL="${{ secrets.WORKER_POOL }}" \
-              --set configMap.TASK_BUFFER="${{ secrets.TASK_BUFFER }}" \
-              --set configMap.WEBHOOK_PURGE_CRON_TAB="${{ secrets.WEBHOOK_PURGE_CRON_TAB }}" \
               --set configMap.PROBE_PORT="${{ secrets.PROBE_PORT }}" \
               --set configMap.METRIC_PORT="${{ secrets.METRIC_PORT }}" \
               --set configMap.LOG_LEVEL="${{ secrets.LOG_LEVEL }}" \

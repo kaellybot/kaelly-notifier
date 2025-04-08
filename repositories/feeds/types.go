@@ -1,0 +1,14 @@
+package feeds
+
+import (
+	"github.com/kaellybot/kaelly-notifier/models/entities"
+	"github.com/kaellybot/kaelly-notifier/utils/databases"
+)
+
+type Repository interface {
+	GetFeedSources() ([]entities.FeedSource, error)
+}
+
+type Impl struct {
+	db databases.MySQLConnection
+}

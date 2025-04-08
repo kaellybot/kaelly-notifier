@@ -10,7 +10,7 @@ import (
 	"github.com/kaellybot/kaelly-notifier/utils/discord"
 )
 
-func MapTweet(tweet *amqp.NewsTwitterMessage, locale amqp.Language) *discordgo.WebhookParams {
+func MapTweet(tweet *amqp.NewsTwitterMessage, locale amqp.Language) *discordgo.MessageSend {
 	description := tweet.Description
 	if len(description) > constants.EmbedDescriptionLimit {
 		description = fmt.Sprintf("%v...", description[:constants.EmbedDescriptionLimit])
@@ -46,7 +46,7 @@ func MapTweet(tweet *amqp.NewsTwitterMessage, locale amqp.Language) *discordgo.W
 		})
 	}
 
-	return &discordgo.WebhookParams{
+	return &discordgo.MessageSend{
 		Embeds: embeds,
 	}
 }

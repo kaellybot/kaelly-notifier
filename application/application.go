@@ -1,17 +1,16 @@
 package application
 
 import (
-	"time"
-
-	"github.com/go-co-op/gocron/v2"
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/models/constants"
+	"github.com/kaellybot/kaelly-notifier/repositories/almanaxes"
 	emojiRepo "github.com/kaellybot/kaelly-notifier/repositories/emojis"
-	"github.com/kaellybot/kaelly-notifier/repositories/webhooks"
+	"github.com/kaellybot/kaelly-notifier/repositories/feeds"
+	"github.com/kaellybot/kaelly-notifier/repositories/twitter"
 	"github.com/kaellybot/kaelly-notifier/services/discord"
 	"github.com/kaellybot/kaelly-notifier/services/emojis"
+	"github.com/kaellybot/kaelly-notifier/services/news"
 	"github.com/kaellybot/kaelly-notifier/services/notifiers"
-	"github.com/kaellybot/kaelly-notifier/services/workers"
 	"github.com/kaellybot/kaelly-notifier/utils/databases"
 	"github.com/kaellybot/kaelly-notifier/utils/insights"
 	"github.com/rs/zerolog/log"
@@ -31,18 +30,14 @@ func New() (*Impl, error) {
 	probes := insights.NewProbes(broker.IsConnected, db.IsConnected)
 	prom := insights.NewPrometheusMetrics()
 
-	scheduler, errScheduler := gocron.NewScheduler(gocron.WithLocation(time.UTC))
-	if errScheduler != nil {
-		return nil, errScheduler
-	}
-
 	// Repositories
-	webhooksRepo := webhooks.New(db)
+	almanaxRepo := almanaxes.New(db)
+	feedRepo := feeds.New(db)
+	twitterRepo := twitter.New(db)
 	emojiRepo := emojiRepo.New(db)
 
 	// services
-	workerService := workers.New()
-	discordService, errDisc := discord.New(workerService)
+	discordService, errDisc := discord.New()
 	if errDisc != nil {
 		return nil, errDisc
 	}
@@ -52,20 +47,20 @@ func New() (*Impl, error) {
 		return nil, errEmoji
 	}
 
-	notifierService, errNotif := notifiers.New(broker, scheduler, discordService,
-		emojiService, webhooksRepo)
-	if errNotif != nil {
-		return nil, errNotif
+	newsService, errNew := news.New(almanaxRepo, feedRepo, twitterRepo)
+	if errNew != nil {
+		return nil, errNew
 	}
+
+	notifierService := notifiers.New(broker, discordService,
+		emojiService, newsService)
 
 	return &Impl{
 		broker:          broker,
 		db:              db,
-		scheduler:       scheduler,
 		probes:          probes,
 		prom:            prom,
 		discordService:  discordService,
-		workerService:   workerService,
 		notifierService: notifierService,
 	}, nil
 }
@@ -78,26 +73,13 @@ func (app *Impl) Run() error {
 		return err
 	}
 
-	app.scheduler.Start()
-	for _, job := range app.scheduler.Jobs() {
-		scheduledTime, err := job.NextRun()
-		if err == nil {
-			log.Info().Msgf("%v scheduled at %v", job.Name(), scheduledTime)
-		}
-	}
-
 	app.notifierService.Consume()
 	return nil
 }
 
 func (app *Impl) Shutdown() {
-	if err := app.scheduler.Shutdown(); err != nil {
-		log.Error().Err(err).Msg("Cannot shutdown scheduler, continuing...")
-	}
-
 	app.broker.Shutdown()
 	app.db.Shutdown()
-	app.workerService.Shutdown()
 	app.discordService.Shutdown()
 	app.prom.Shutdown()
 	app.probes.Shutdown()

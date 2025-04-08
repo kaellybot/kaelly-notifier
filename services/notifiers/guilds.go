@@ -1,7 +1,6 @@
 package notifiers
 
 import (
-	"github.com/bwmarrin/discordgo"
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/models/constants"
 	"github.com/kaellybot/kaelly-notifier/models/mappers"
@@ -9,7 +8,7 @@ import (
 )
 
 func (service *Impl) guildNews(ctx amqp.Context, message *amqp.RabbitMQMessage) {
-	var content *discordgo.WebhookParams
+	var content string
 	newsGuild := message.NewsGuildMessage
 	switch newsGuild.Event {
 	case amqp.NewsGuildMessage_CREATE:
@@ -25,6 +24,6 @@ func (service *Impl) guildNews(ctx amqp.Context, message *amqp.RabbitMQMessage) 
 		return
 	}
 
-	service.discordService.PublishWebhook(ctx.CorrelationID, service.internalWebhookID,
-		service.internalWebhookToken, content)
+	service.discordService.SendMessage(ctx.CorrelationID,
+		service.reportingChannelID, content)
 }

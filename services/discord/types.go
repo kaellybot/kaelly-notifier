@@ -2,17 +2,15 @@ package discord
 
 import (
 	"github.com/bwmarrin/discordgo"
-	"github.com/kaellybot/kaelly-notifier/services/workers"
 )
 
 type Service interface {
-	PublishWebhook(correlationID, webhookID, webhookToken string,
-		content *discordgo.WebhookParams)
-	IsWebhookAvailable(webhookID string) bool
+	AnnounceMessage(correlationID, newsChannelID string,
+		message *discordgo.MessageSend)
+	SendMessage(correlationID, channelID, content string)
 	Shutdown()
 }
 
 type Impl struct {
-	session       *discordgo.Session
-	workerService workers.Service
+	session *discordgo.Session
 }

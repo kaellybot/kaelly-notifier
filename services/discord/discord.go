@@ -1,18 +1,15 @@
 package discord
 
 import (
-	"errors"
 	"fmt"
-	"net/http"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/kaellybot/kaelly-notifier/models/constants"
-	"github.com/kaellybot/kaelly-notifier/services/workers"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 )
 
-func New(workerService workers.Service) (*Impl, error) {
+func New() (*Impl, error) {
 	dg, err := discordgo.New(fmt.Sprintf("Bot %v", viper.GetString(constants.DiscordToken)))
 	if err != nil {
 		log.Error().Err(err).Msgf("Connecting to Discord gateway failed")
@@ -20,42 +17,39 @@ func New(workerService workers.Service) (*Impl, error) {
 	}
 
 	return &Impl{
-		session:       dg,
-		workerService: workerService,
+		session: dg,
 	}, nil
 }
 
-func (service *Impl) PublishWebhook(correlationID, webhookID, webhookToken string,
-	content *discordgo.WebhookParams) {
-	service.workerService.Work(func() {
-		_, err := service.session.WebhookExecute(
-			webhookID,
-			webhookToken,
-			false, // No need to wait for webhook response.
-			content,
-		)
-		if err != nil {
-			log.Error().Err(err).
-				Str(constants.LogCorrelationID, correlationID).
-				Msgf("Cannot publish through webhook, ignoring it")
-		}
-	})
-}
-
-func (service *Impl) IsWebhookAvailable(webhookID string) bool {
-	_, err := service.session.Webhook(webhookID)
-	if err != nil {
-		var httpErr *discordgo.RESTError
-		if errors.As(err, &httpErr) && httpErr.Response.StatusCode == http.StatusNotFound {
-			return false
-		}
-		log.Warn().Err(err).
-			Str(constants.LogWebhookID, webhookID).
-			Msg("Ignoring it this time...")
-		return true
+func (service *Impl) AnnounceMessage(correlationID, newsChannelID string,
+	message *discordgo.MessageSend) {
+	msg, errSend := service.session.ChannelMessageSendComplex(newsChannelID, message)
+	if errSend != nil {
+		log.Error().Err(errSend).
+			Str(constants.LogCorrelationID, correlationID).
+			Str(constants.LogChannelID, newsChannelID).
+			Msgf("Cannot send message in news channel, ignoring it")
+		return
 	}
 
-	return true
+	_, errCrossPost := service.session.ChannelMessageCrosspost(newsChannelID, msg.ID)
+	if errCrossPost != nil {
+		log.Error().Err(errCrossPost).
+			Str(constants.LogCorrelationID, correlationID).
+			Str(constants.LogChannelID, newsChannelID).
+			Msgf("Cannot crosspost message in news channel, ignoring it")
+		return
+	}
+}
+
+func (service *Impl) SendMessage(correlationID, channelID, content string) {
+	_, errSend := service.session.ChannelMessageSend(channelID, content)
+	if errSend != nil {
+		log.Error().Err(errSend).
+			Str(constants.LogCorrelationID, correlationID).
+			Str(constants.LogChannelID, channelID).
+			Msgf("Cannot send message in channel, ignoring it")
+	}
 }
 
 func (service *Impl) Shutdown() {

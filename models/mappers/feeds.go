@@ -22,9 +22,9 @@ var (
 	newLinesRegex = regexp.MustCompile("\n\\s*\n")
 )
 
-func MapFeed(rssMessage *amqp.NewsRSSMessage, locale amqp.Language) *discordgo.WebhookParams {
+func MapFeed(rssMessage *amqp.NewsRSSMessage, locale amqp.Language) *discordgo.MessageSend {
 	imageEmbed, files := retrieveImage(rssMessage.IconUrl)
-	return &discordgo.WebhookParams{
+	return &discordgo.MessageSend{
 		Embeds: []*discordgo.MessageEmbed{
 			{
 				Title:       rssMessage.Title,

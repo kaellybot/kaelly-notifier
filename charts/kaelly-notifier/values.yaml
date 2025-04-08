@@ -76,9 +76,6 @@ tolerations: []
 affinity: {}
 
 configMap:
-  WORKER_POOL: ""
-  TASK_BUFFER: ""
-  WEBHOOK_PURGE_CRON_TAB: ""
   PROBE_PORT: "9090"
   METRIC_PORT: "2112"
   LOG_LEVEL: "info"
@@ -86,8 +83,7 @@ configMap:
 
 secrets:
   DISCORD_TOKEN: ""
-  DISCORD_WEBHOOK_ID: ""
-  DISCORD_WEBHOOK_TOKEN: ""
+  REPORTING_CHANNEL_ID: ""
   MYSQL_URL: ""
   MYSQL_USER: ""
   MYSQL_PASSWORD: ""

@@ -11,12 +11,12 @@ import (
 )
 
 func MapAlmanax(almanax *amqp.NewsAlmanaxMessage_I18NAlmanax,
-	source *amqp.Source, emojiService emojis.Service) *discordgo.WebhookParams {
+	source *amqp.Source, emojiService emojis.Service) *discordgo.MessageSend {
 	lg := constants.GetLanguage(almanax.Locale)
 	season := constants.GetSeason(almanax.Almanax.Date.AsTime())
 	fullDate := lg.DateTranslator.FmtDateFull(almanax.Almanax.Date.AsTime())
 	simpleDate := almanax.Almanax.Date.AsTime().Format(constants.DiscordDateOnlyFormat)
-	return &discordgo.WebhookParams{
+	return &discordgo.MessageSend{
 		Embeds: []*discordgo.MessageEmbed{
 			{
 				Title: i18n.Get(lg.Locale, "almanax.title", i18n.Vars{"date": fullDate}),

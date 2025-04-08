@@ -8,30 +8,25 @@ import (
 )
 
 func (service *Impl) twitterNews(ctx amqp.Context, message *amqp.RabbitMQMessage) {
-	twitterAccountID := message.NewsTwitterMessage.TwitterId
-	twitterWebhooks, errGet := service.webhookRepo.GetTwitterWebhooks(twitterAccountID)
-	if errGet != nil {
-		log.Error().Err(errGet).
+	twitterAccount := service.newsService.GetTwitterAccount(message.NewsTwitterMessage.TwitterId)
+	if twitterAccount == nil {
+		log.Error().
 			Str(constants.LogCorrelationID, ctx.CorrelationID).
-			Str(constants.LogEntityID, twitterAccountID).
+			Str(constants.LogEntityID, message.NewsTwitterMessage.TwitterId).
 			Str(constants.LogGame, message.Game.String()).
 			Str(constants.LogLocale, message.Language.String()).
-			Msg("Cannot retrieve twitter webhooks, ignoring the tweet occurence")
+			Msg("Cannot retrieve twitter account, ignoring the tweet occurence")
 		return
 	}
 
-	content := mappers.MapTweet(message.NewsTwitterMessage, message.Language)
-	webhooks := make([]*constants.Webhook, 0)
-	for _, twitterWebhook := range twitterWebhooks {
-		webhooks = append(webhooks, &twitterWebhook.Webhook)
-	}
-
-	service.dispatch(ctx.CorrelationID, content, webhooks)
+	response := mappers.MapTweet(message.NewsTwitterMessage, message.Language)
+	service.discordService.
+		AnnounceMessage(ctx.CorrelationID, twitterAccount.NewsChannelID, response)
 	log.Info().
 		Str(constants.LogCorrelationID, ctx.CorrelationID).
-		Str(constants.LogEntityID, twitterAccountID).
+		Str(constants.LogChannelID, twitterAccount.NewsChannelID).
+		Str(constants.LogEntityID, twitterAccount.ID).
 		Str(constants.LogGame, message.Game.String()).
 		Str(constants.LogLocale, message.Language.String()).
-		Int(constants.LogWebhookCount, len(twitterWebhooks)).
 		Msg("Tweet published!")
 }

@@ -2,11 +2,11 @@ package entities
 
 import (
 	amqp "github.com/kaellybot/kaelly-amqp"
-	"github.com/kaellybot/kaelly-notifier/models/constants"
 )
 
-type WebhookTwitter struct {
-	constants.Webhook
-	TwitterID string `gorm:"primaryKey"`
-	Locale    amqp.Language
+type TwitterAccount struct {
+	ID            string `gorm:"primaryKey"`
+	Name          string
+	NewsChannelID string
+	Game          amqp.Game
 }

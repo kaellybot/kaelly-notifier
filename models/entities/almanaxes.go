@@ -2,11 +2,10 @@ package entities
 
 import (
 	amqp "github.com/kaellybot/kaelly-amqp"
-	"github.com/kaellybot/kaelly-notifier/models/constants"
 )
 
-type WebhookAlmanax struct {
-	constants.Webhook
-	Game   amqp.Game `gorm:"primaryKey"`
-	Locale amqp.Language
+type AlmanaxNews struct {
+	Locale        amqp.Language `gorm:"primaryKey"`
+	Game          amqp.Game     `gorm:"primaryKey"`
+	NewsChannelID string        `gorm:"type:varchar(100)"`
 }
