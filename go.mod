@@ -7,7 +7,7 @@ go 1.24
 require (
 	github.com/bwmarrin/discordgo v0.28.1
 	github.com/go-playground/locales v0.14.1
-	github.com/kaellybot/kaelly-amqp v0.0.10-beta4
+	github.com/kaellybot/kaelly-amqp v1.0.0
 	github.com/kaysoro/discordgo-i18n v1.0.4
 	github.com/prometheus/client_golang v1.20.5
 	github.com/rs/zerolog v1.33.0
@@ -50,7 +50,7 @@ require (
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
 	golang.org/x/crypto v0.29.0 // indirect
-	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8 // indirect
+	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
 	golang.org/x/sys v0.27.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
