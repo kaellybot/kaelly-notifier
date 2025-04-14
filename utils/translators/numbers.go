@@ -2,11 +2,11 @@ package translators
 
 import (
 	"github.com/bwmarrin/discordgo"
-	"github.com/kaellybot/kaelly-notifier/models/constants"
+	"github.com/kaellybot/kaelly-notifier/models/i18n"
 	"golang.org/x/text/message"
 )
 
 func FormatNumber(value int64, lg discordgo.Locale) string {
-	tag := constants.MapTag(lg)
+	tag := i18n.MapTag(lg)
 	return message.NewPrinter(tag).Sprintf("%d", value)
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/models/constants"
+	"github.com/kaellybot/kaelly-notifier/models/i18n"
 	"github.com/kaellybot/kaelly-notifier/utils/discord"
 	"github.com/kaellybot/kaelly-notifier/utils/images"
 	"github.com/rs/zerolog/log"
@@ -39,7 +40,7 @@ func MapFeed(rssMessage *amqp.NewsRSSMessage, locale amqp.Language) *discordgo.M
 				},
 				Image:     imageEmbed,
 				Timestamp: rssMessage.Date.AsTime().Format(time.RFC3339),
-				Footer:    discord.BuildDefaultFooter(constants.GetLanguage(locale).Locale, ""),
+				Footer:    discord.BuildDefaultFooter(i18n.GetLanguage(locale).Locale, ""),
 			},
 		},
 		Files: files,

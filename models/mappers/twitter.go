@@ -7,6 +7,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/models/constants"
+	"github.com/kaellybot/kaelly-notifier/models/i18n"
 	"github.com/kaellybot/kaelly-notifier/utils/discord"
 )
 
@@ -25,7 +26,7 @@ func MapTweet(tweet *amqp.NewsTwitterMessage, locale amqp.Language) *discordgo.M
 			URL: constants.TwitterLogo,
 		},
 		Timestamp: tweet.Date.AsTime().Format(time.RFC3339),
-		Footer:    discord.BuildDefaultFooter(constants.GetLanguage(locale).Locale, ""),
+		Footer:    discord.BuildDefaultFooter(i18n.GetLanguage(locale).Locale, ""),
 	}
 
 	if len(tweet.IconUrls) > 0 {

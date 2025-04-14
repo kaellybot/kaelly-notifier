@@ -3,6 +3,7 @@ package notifiers
 import (
 	amqp "github.com/kaellybot/kaelly-amqp"
 	"github.com/kaellybot/kaelly-notifier/models/constants"
+	"github.com/kaellybot/kaelly-notifier/models/i18n"
 	"github.com/kaellybot/kaelly-notifier/models/mappers"
 	"github.com/rs/zerolog/log"
 )
@@ -36,7 +37,7 @@ func (service *Impl) almanaxNews(ctx amqp.Context, message *amqp.RabbitMQMessage
 func withFallback(almanaxes []*amqp.NewsAlmanaxMessage_I18NAlmanax) []*amqp.NewsAlmanaxMessage_I18NAlmanax {
 	var fallback *amqp.Almanax
 	for _, almanax := range almanaxes {
-		if almanax.Almanax != nil && almanax.Locale == constants.DefaultAMQPLocale {
+		if almanax.Almanax != nil && almanax.Locale == i18n.DefaultAMQPLocale {
 			fallback = almanax.Almanax
 			break
 		}
