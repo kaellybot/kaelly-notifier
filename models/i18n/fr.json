@@ -22,7 +22,7 @@
         "delete": "[LOSE] **{{ .name }}**, -{{ .memberCount }} utilisateurs"
     },
     "set": {
-        "message": "{{ if .sets }}Les vignettes de panoplies {{ .game }} sont manquantes pour les IDs suivants :\n{{ range .sets}} * {{ . }}\n{{ end }}{{ else }}Aucune vignette de panoplie n'est manquante pour {{ .game }} !{{ end }}"
+        "message": "{{ if .sets }}{{ len .sets }} vignettes de panoplies {{ .game }} sont manquantes.{{ else }}Aucune vignette de panoplie n'est manquante pour {{ .game }} !{{ end }}"
     },
     "default": {
         "footer": "{{ .name }} • Message automatique{{ if .date }} • {{ .date }}{{ end }}"

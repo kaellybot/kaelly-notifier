@@ -22,7 +22,7 @@
         "delete": "[VERLUST] **{{ .name }}**, -{{ .memberCount }} Benutzer"
     },
     "set": {
-        "message": "{{ if .sets }}Die Thumbnails für {{ .game }} fehlen für folgende IDs:\n{{ range .sets}} * {{ . }}\n{{ end }}{{ else }}Alle Thumbnails für {{ .game }} sind auf dem neuesten Stand!{{ end }}"
+        "message": "{{ if .sets }}{{ len .sets }} thumbnails für {{ .game }} fehlen.{{ else }}Alle Thumbnails für {{ .game }} sind auf dem neuesten Stand!{{ end }}"
     },
     "default": {
         "footer": "{{ .name }} • Automatische Nachricht{{ if .date }} • {{ .date }}{{ end }}"

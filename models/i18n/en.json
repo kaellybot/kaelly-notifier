@@ -22,7 +22,7 @@
         "delete": "[LOSE] **{{ .name }}**, -{{ .memberCount }} users"
     },
     "set": {
-        "message": "{{ if .sets }}{{ .game }} thumbnails sets are missing for following IDs:\n{{ range .sets}} * {{ . }}\n{{ end }}{{ else }}{{ .game }} thumbnails sets are all up-to-date!{{ end }}"
+        "message": "{{ if .sets }}{{ len .sets }} {{ .game }} thumbnails sets are missing.{{ else }}{{ .game }} thumbnails sets are all up-to-date!{{ end }}"
     },
     "default": {
         "footer": "{{ .name }} • Automatic message{{ if .date }} • {{ .date }}{{ end }}"
