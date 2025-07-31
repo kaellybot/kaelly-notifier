@@ -22,7 +22,7 @@
         "delete": "[PERDIDO] **{{ .name }}**, -{{ .memberCount }} usuarios"
     },
     "set": {
-        "message": "{{ if .sets }}{{ len .sets }} faltan miniaturas de conjuntos de {{ .game }}{{ else }}¡Todas las miniaturas de conjuntos de {{ .game }} están actualizadas!{{ end }}"
+        "message": "<@{{ .userID }}>, se deben actualizar algunas miniaturas de conjuntos del juego **{{ .game }}**:\n- **{{ .createdSetIDs }}** creadas\n- **{{ .updatedSetIDs }}** actualizadas\n- **{{ .deletedSetIDs }}** eliminadas"
     },
     "default": {
         "footer": "{{ .name }} • Mensaje automático{{ if .date }} • {{ .date }}{{ end }}"

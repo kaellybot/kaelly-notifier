@@ -5,9 +5,9 @@ go 1.24
 // replace github.com/kaellybot/kaelly-amqp => ../kaelly-amqp
 
 require (
-	github.com/bwmarrin/discordgo v0.28.1
+	github.com/bwmarrin/discordgo v0.29.0
 	github.com/go-playground/locales v0.14.1
-	github.com/kaellybot/kaelly-amqp v1.0.0
+	github.com/kaellybot/kaelly-amqp v1.0.5
 	github.com/kaysoro/discordgo-i18n v1.0.5
 	github.com/prometheus/client_golang v1.20.5
 	github.com/rs/zerolog v1.34.0

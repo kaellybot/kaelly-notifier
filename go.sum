@@ -1,7 +1,7 @@
 github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
 github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
-github.com/bwmarrin/discordgo v0.28.1 h1:gXsuo2GBO7NbR6uqmrrBDplPUx2T3nzu775q/Rd1aG4=
-github.com/bwmarrin/discordgo v0.28.1/go.mod h1:NJZpH+1AfhIcyQsPeuBKsUtYrRnjkyu0kIVMCHkZtRY=
+github.com/bwmarrin/discordgo v0.29.0 h1:FmWeXFaKUwrcL3Cx65c20bTRW+vOb6k8AnaP+EgjDno=
+github.com/bwmarrin/discordgo v0.29.0/go.mod h1:NJZpH+1AfhIcyQsPeuBKsUtYrRnjkyu0kIVMCHkZtRY=
 github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
 github.com/cespare/xxhash/v2 v2.3.0/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
 github.com/coreos/go-systemd/v22 v22.5.0/go.mod h1:Y58oyj3AT4RCenI/lSvhwexgC+NSVTIJ3seZv2GcEnc=
@@ -34,8 +34,8 @@ github.com/jinzhu/inflection v1.0.0 h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD
 github.com/jinzhu/inflection v1.0.0/go.mod h1:h+uFLlag+Qp1Va5pdKtLDYj+kHp5pxUVkryuEj+Srlc=
 github.com/jinzhu/now v1.1.5 h1:/o9tlHleP7gOFmsnYNz3RGnqzefHA47wQpKrrdTIwXQ=
 github.com/jinzhu/now v1.1.5/go.mod h1:d3SSVoowX0Lcu0IBviAWJpolVfI5UJVZZ7cO71lE/z8=
-github.com/kaellybot/kaelly-amqp v1.0.0 h1:VtbbF41IlNdH6/BKUfE/ZElOLUJT2r51fW7o0QG16Mc=
-github.com/kaellybot/kaelly-amqp v1.0.0/go.mod h1:SO8dV5G+7oAAnVghb/OvIBFMfW6ONg0MvoJWwIAI0CQ=
+github.com/kaellybot/kaelly-amqp v1.0.5 h1:oRIcMmQLd/iOdKsVEsQYTjzQfOf7I1q4pdAbfF5kCqU=
+github.com/kaellybot/kaelly-amqp v1.0.5/go.mod h1:SO8dV5G+7oAAnVghb/OvIBFMfW6ONg0MvoJWwIAI0CQ=
 github.com/kaysoro/discordgo-i18n v1.0.5 h1:IbE2FYFgAQUhcqKa640t3h6vi+Qh9JK/+y396pkS1Yw=
 github.com/kaysoro/discordgo-i18n v1.0.5/go.mod h1:to8aVJgCoqJMwZUnhvF045tyaVxl115Ds72YDq3lyjs=
 github.com/klauspost/compress v1.17.9 h1:6KIumPrER1LHsvBVuDa0r5xaG0Es51mhhB9BQB2qeMA=

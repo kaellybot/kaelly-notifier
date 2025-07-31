@@ -9,7 +9,10 @@ import (
 
 func MapSetNews(setNews *amqp.NewsSetMessage, game amqp.Game) string {
 	return di18n.Get(i18n.InternalLocale, "set.message", di18n.Vars{
-		"game": constants.GetGame(game).Name,
-		"sets": setNews.SetIds,
+		"userID":        constants.AuthorID,
+		"game":          constants.GetGame(game).Name,
+		"createdSetIDs": len(setNews.CreatedSetIds),
+		"updatedSetIDs": len(setNews.UpdatedSetIds),
+		"deletedSetIDs": len(setNews.DeletedSetIds),
 	})
 }

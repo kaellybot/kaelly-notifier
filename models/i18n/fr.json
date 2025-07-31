@@ -22,7 +22,7 @@
         "delete": "[LOSE] **{{ .name }}**, -{{ .memberCount }} utilisateurs"
     },
     "set": {
-        "message": "{{ if .sets }}{{ len .sets }} vignettes de panoplies {{ .game }} sont manquantes.{{ else }}Aucune vignette de panoplie n'est manquante pour {{ .game }} !{{ end }}"
+        "message": "<@{{ .userID }}>, des vignettes de panoplie du jeu **{{ .game }}** sont à mettre à jour:\n- **{{ .createdSetIDs }}** créées\n- **{{ .updatedSetIDs }}** mises à jour\n- **{{ .deletedSetIDs }}** supprimées"
     },
     "default": {
         "footer": "{{ .name }} • Message automatique{{ if .date }} • {{ .date }}{{ end }}"
