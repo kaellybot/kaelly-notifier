@@ -11,8 +11,8 @@ import (
 	di18n "github.com/kaysoro/discordgo-i18n"
 )
 
-func MapAlmanax(almanax *amqp.NewsAlmanaxMessage_I18NAlmanax,
-	source *amqp.Source, emojiService emojis.Service) *discordgo.MessageSend {
+func MapAlmanax(almanax *amqp.NewsAlmanaxMessage_I18NAlmanax, source *amqp.Source,
+	game constants.AnkamaGame, emojiService emojis.Service) *discordgo.MessageSend {
 	lg := i18n.GetLanguage(almanax.Locale)
 	season := constants.GetSeason(almanax.Almanax.Date.AsTime())
 	fullDate := lg.DateTranslator.FmtDateFull(almanax.Almanax.Date.AsTime())
@@ -40,8 +40,9 @@ func MapAlmanax(almanax *amqp.NewsAlmanaxMessage_I18NAlmanax,
 					{
 						Name: di18n.Get(lg.Locale, "almanax.tribute.title"),
 						Value: di18n.Get(lg.Locale, "almanax.tribute.description", di18n.Vars{
-							"item":     almanax.Almanax.Tribute.Item.Name,
-							"emoji":    emojiService.GetItemTypeStringEmoji(almanax.Almanax.GetTribute().Item.GetType()),
+							"item": almanax.Almanax.Tribute.Item.Name,
+							"emoji": emojiService.GetItemTypeStringEmoji(game.AMQPGame,
+								almanax.Almanax.GetTribute().Item.GetType()),
 							"quantity": almanax.Almanax.Tribute.Quantity,
 						}),
 					},
@@ -49,11 +50,11 @@ func MapAlmanax(almanax *amqp.NewsAlmanaxMessage_I18NAlmanax,
 						Name: di18n.Get(lg.Locale, "almanax.reward.title"),
 						Value: di18n.Get(lg.Locale, "almanax.reward.description", di18n.Vars{
 							"reward":   translators.FormatNumber(almanax.Almanax.Reward, lg.Locale),
-							"kamaIcon": emojiService.GetMiscStringEmoji(constants.EmojiIDKama),
+							"kamaIcon": emojiService.GetMiscStringEmoji(game.AMQPGame, constants.EmojiIDKama),
 						}),
 					},
 				},
-				Footer: discord.BuildDefaultFooter(lg.Locale, simpleDate),
+				Footer: discord.BuildDefaultFooter(game, lg.Locale, simpleDate),
 			},
 		},
 	}

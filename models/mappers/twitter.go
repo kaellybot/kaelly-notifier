@@ -11,7 +11,8 @@ import (
 	"github.com/kaellybot/kaelly-notifier/utils/discord"
 )
 
-func MapTweet(tweet *amqp.NewsTwitterMessage, locale amqp.Language) *discordgo.MessageSend {
+func MapTweet(tweet *amqp.NewsTwitterMessage, game constants.AnkamaGame,
+	locale amqp.Language) *discordgo.MessageSend {
 	description := tweet.Description
 	if len(description) > constants.EmbedDescriptionLimit {
 		description = fmt.Sprintf("%v...", description[:constants.EmbedDescriptionLimit])
@@ -26,7 +27,7 @@ func MapTweet(tweet *amqp.NewsTwitterMessage, locale amqp.Language) *discordgo.M
 			URL: constants.TwitterLogo,
 		},
 		Timestamp: tweet.Date.AsTime().Format(time.RFC3339),
-		Footer:    discord.BuildDefaultFooter(i18n.GetLanguage(locale).Locale, ""),
+		Footer:    discord.BuildDefaultFooter(game, i18n.GetLanguage(locale).Locale, ""),
 	}
 
 	if len(tweet.IconUrls) > 0 {

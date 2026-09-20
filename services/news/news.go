@@ -58,9 +58,11 @@ func (service *Impl) GetFeedSource(feedTypeID string, locale amqp.Language,
 	return nil
 }
 
-func (service *Impl) GetTwitterAccount(accountID string) *entities.TwitterAccount {
+func (service *Impl) GetTwitterAccount(accountID string,
+	game amqp.Game) *entities.TwitterAccount {
 	for _, account := range service.twitterAccounts {
-		if account.ID == accountID {
+		if account.ID == accountID &&
+			account.Game == game {
 			return &account
 		}
 	}

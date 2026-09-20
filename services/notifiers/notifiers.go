@@ -35,20 +35,32 @@ func (service *Impl) Consume() {
 }
 
 func (service *Impl) consume(ctx amqp.Context, message *amqp.RabbitMQMessage) {
+	// The AMQP guard already refuses news without a game, so an unknown game here is
+	// a game this notifier does not know. It is dropped rather than posted under
+	// another bot's branding.
+	game, found := constants.GetGame(message.GetGame())
+	if !found {
+		log.Error().
+			Str(constants.LogCorrelationID, ctx.CorrelationID).
+			Str(constants.LogGame, message.GetGame().String()).
+			Msgf("Game not recognized, news ignored")
+		return
+	}
+
 	//exhaustive:ignore Don't need to be exhaustive here since they will be handled by default case
-	switch message.Type {
+	switch message.GetType() {
 	case amqp.RabbitMQMessage_NEWS_ALMANAX:
-		service.almanaxNews(ctx, message)
+		service.almanaxNews(ctx, message, game)
 	case amqp.RabbitMQMessage_NEWS_GAME:
-		service.gameNews(ctx, message)
+		service.gameNews(ctx, message, game)
 	case amqp.RabbitMQMessage_NEWS_GUILD:
 		service.guildNews(ctx, message)
 	case amqp.RabbitMQMessage_NEWS_RSS:
-		service.feedNews(ctx, message)
+		service.feedNews(ctx, message, game)
 	case amqp.RabbitMQMessage_NEWS_SET:
-		service.setNews(ctx, message)
+		service.setNews(ctx, message, game)
 	case amqp.RabbitMQMessage_NEWS_TWITTER:
-		service.twitterNews(ctx, message)
+		service.twitterNews(ctx, message, game)
 	default:
 		log.Warn().
 			Str(constants.LogCorrelationID, ctx.CorrelationID).

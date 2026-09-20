@@ -11,7 +11,7 @@ import (
 type Service interface {
 	GetAlmanaxNews(locale amqp.Language, game amqp.Game) *entities.AlmanaxNews
 	GetFeedSource(feedTypeID string, locale amqp.Language, game amqp.Game) *entities.FeedSource
-	GetTwitterAccount(accountID string) *entities.TwitterAccount
+	GetTwitterAccount(accountID string, game amqp.Game) *entities.TwitterAccount
 }
 
 type Impl struct {

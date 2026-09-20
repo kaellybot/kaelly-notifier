@@ -83,6 +83,7 @@ configMap:
 
 secrets:
   DISCORD_TOKEN: ""
+  DISCORD_TOKEN_DOFUS_TOUCH: ""
   REPORTING_CHANNEL_ID: ""
   MYSQL_URL: ""
   MYSQL_USER: ""

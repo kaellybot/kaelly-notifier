@@ -23,7 +23,8 @@ var (
 	newLinesRegex = regexp.MustCompile("\n\\s*\n")
 )
 
-func MapFeed(rssMessage *amqp.NewsRSSMessage, locale amqp.Language) *discordgo.MessageSend {
+func MapFeed(rssMessage *amqp.NewsRSSMessage, game constants.AnkamaGame,
+	locale amqp.Language) *discordgo.MessageSend {
 	imageEmbed, files := retrieveImage(rssMessage.IconUrl)
 	return &discordgo.MessageSend{
 		Embeds: []*discordgo.MessageEmbed{
@@ -40,7 +41,7 @@ func MapFeed(rssMessage *amqp.NewsRSSMessage, locale amqp.Language) *discordgo.M
 				},
 				Image:     imageEmbed,
 				Timestamp: rssMessage.Date.AsTime().Format(time.RFC3339),
-				Footer:    discord.BuildDefaultFooter(i18n.GetLanguage(locale).Locale, ""),
+				Footer:    discord.BuildDefaultFooter(game, i18n.GetLanguage(locale).Locale, ""),
 			},
 		},
 		Files: files,

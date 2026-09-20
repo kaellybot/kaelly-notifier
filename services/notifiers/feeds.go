@@ -7,7 +7,8 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func (service *Impl) feedNews(ctx amqp.Context, message *amqp.RabbitMQMessage) {
+func (service *Impl) feedNews(ctx amqp.Context, message *amqp.RabbitMQMessage,
+	game constants.AnkamaGame) {
 	feedSource := service.newsService.GetFeedSource(message.NewsRSSMessage.Type,
 		message.Language, message.Game)
 	if feedSource == nil {
@@ -20,9 +21,9 @@ func (service *Impl) feedNews(ctx amqp.Context, message *amqp.RabbitMQMessage) {
 		return
 	}
 
-	embeds := mappers.MapFeed(message.NewsRSSMessage, message.Language)
+	embeds := mappers.MapFeed(message.GetNewsRSSMessage(), game, message.GetLanguage())
 	service.discordService.
-		AnnounceMessage(ctx.CorrelationID, feedSource.NewsChannelID, embeds)
+		AnnounceMessage(ctx.CorrelationID, message.GetGame(), feedSource.NewsChannelID, embeds)
 	log.Info().
 		Str(constants.LogCorrelationID, ctx.CorrelationID).
 		Str(constants.LogEntityID, feedSource.FeedTypeID).

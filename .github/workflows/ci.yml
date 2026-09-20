@@ -114,6 +114,7 @@ jobs:
               --create-namespace \
               --set image.tag="${{ env.image_tag_name }}" \
               --set-string secrets.DISCORD_TOKEN="${{ secrets.DISCORD_TOKEN }}" \
+              --set-string secrets.DISCORD_TOKEN_DOFUS_TOUCH="${{ secrets.DISCORD_TOKEN_DOFUS_TOUCH }}" \
               --set-string secrets.REPORTING_CHANNEL_ID="${{ secrets.REPORTING_CHANNEL_ID }}" \
               --set secrets.MYSQL_URL="${{ secrets.MYSQL_URL }}" \
               --set secrets.MYSQL_USER="${{ secrets.MYSQL_USER }}" \

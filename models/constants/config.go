@@ -7,8 +7,12 @@ import (
 const (
 	ConfigFileName = ".env"
 
-	// Discord Bot Token.
+	// Discord Bot Token of the DOFUS application.
 	DiscordToken = "DISCORD_TOKEN"
+
+	// Discord Bot Token of the DOFUS Touch application. Required: the notifier serves
+	// every game, so starting without it would leave Touch news undelivered.
+	DiscordTokenDofusTouch = "DISCORD_TOKEN_DOFUS_TOUCH"
 
 	// Channel snowflake for internal informations.
 	ReportingChannelID = "REPORTING_CHANNEL_ID"
@@ -41,6 +45,7 @@ const (
 	Production = "PRODUCTION"
 
 	defaultDiscordToken       = ""
+	defaultDiscordTokenTouch  = ""
 	defaultReportingChannelID = ""
 	defaultMySQLURL           = "localhost:3306"
 	defaultMySQLUser          = ""
@@ -55,16 +60,17 @@ const (
 
 func GetDefaultConfigValues() map[string]any {
 	return map[string]any{
-		DiscordToken:       defaultDiscordToken,
-		ReportingChannelID: defaultReportingChannelID,
-		MySQLURL:           defaultMySQLURL,
-		MySQLUser:          defaultMySQLUser,
-		MySQLPassword:      defaultMySQLPassword,
-		MySQLDatabase:      defaultMySQLDatabase,
-		RabbitMQAddress:    defaultRabbitMQAddress,
-		ProbePort:          defaultProbePort,
-		MetricPort:         defaultMetricPort,
-		LogLevel:           defaultLogLevel.String(),
-		Production:         defaultProduction,
+		DiscordToken:           defaultDiscordToken,
+		DiscordTokenDofusTouch: defaultDiscordTokenTouch,
+		ReportingChannelID:     defaultReportingChannelID,
+		MySQLURL:               defaultMySQLURL,
+		MySQLUser:              defaultMySQLUser,
+		MySQLPassword:          defaultMySQLPassword,
+		MySQLDatabase:          defaultMySQLDatabase,
+		RabbitMQAddress:        defaultRabbitMQAddress,
+		ProbePort:              defaultProbePort,
+		MetricPort:             defaultMetricPort,
+		LogLevel:               defaultLogLevel.String(),
+		Production:             defaultProduction,
 	}
 }

@@ -7,9 +7,9 @@ import (
 	di18n "github.com/kaysoro/discordgo-i18n"
 )
 
-func MapGameNews(gameNews *amqp.NewsGameMessage, game amqp.Game) string {
+func MapGameNews(gameNews *amqp.NewsGameMessage, game constants.AnkamaGame) string {
 	return di18n.Get(i18n.InternalLocale, "game.message", di18n.Vars{
-		"game":    constants.GetGame(game).Name,
-		"version": gameNews.Version,
+		"game":    game.Name,
+		"version": gameNews.GetVersion(),
 	})
 }

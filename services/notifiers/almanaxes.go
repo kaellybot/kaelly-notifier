@@ -8,7 +8,8 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func (service *Impl) almanaxNews(ctx amqp.Context, message *amqp.RabbitMQMessage) {
+func (service *Impl) almanaxNews(ctx amqp.Context, message *amqp.RabbitMQMessage,
+	game constants.AnkamaGame) {
 	almanaxes := withFallback(message.NewsAlmanaxMessage.Almanaxes)
 	for _, almanax := range almanaxes {
 		almanaxNews := service.newsService.GetAlmanaxNews(almanax.Locale, message.Game)
@@ -21,9 +22,10 @@ func (service *Impl) almanaxNews(ctx amqp.Context, message *amqp.RabbitMQMessage
 			continue
 		}
 
-		response := mappers.MapAlmanax(almanax, message.NewsAlmanaxMessage.Source,
-			service.emojiService)
-		service.discordService.AnnounceMessage(ctx.CorrelationID, almanaxNews.NewsChannelID, response)
+		response := mappers.MapAlmanax(almanax, message.GetNewsAlmanaxMessage().GetSource(),
+			game, service.emojiService)
+		service.discordService.AnnounceMessage(ctx.CorrelationID, message.GetGame(),
+			almanaxNews.NewsChannelID, response)
 		log.Info().
 			Str(constants.LogCorrelationID, ctx.CorrelationID).
 			Str(constants.LogGame, message.Game.String()).
