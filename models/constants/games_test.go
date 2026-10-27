@@ -18,7 +18,7 @@ func TestGetGame(t *testing.T) {
 	}{
 		{game: amqp.Game_DOFUS_GAME, wantFound: true, wantBot: "KaellyBot"},
 		{game: amqp.Game_DOFUS_TOUCH, wantFound: true, wantBot: "KaellyTouch"},
-		{game: amqp.Game_DOFUS_RETRO, wantFound: true, wantBot: ""},
+		{game: amqp.Game_DOFUS_RETRO, wantFound: true, wantBot: "KaellyRetro"},
 		{game: amqp.Game_ANY_GAME, wantFound: false, wantBot: ""},
 	}
 

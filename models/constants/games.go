@@ -35,11 +35,12 @@ func GetGames() []AnkamaGame {
 			DiscordTokenKey: DiscordTokenDofusTouch,
 		},
 		{
-			// No Discord application: Retro is not served by any bot, so it has no
-			// token key and no session is ever built for it.
-			Name:     "DOFUS Retro",
-			Icon:     cdnURL + "/common/logos/dofus_retro.webp",
-			AMQPGame: amqp.Game_DOFUS_RETRO,
+			Name:            "DOFUS Retro",
+			Icon:            cdnURL + "/common/logos/dofus_retro.webp",
+			AMQPGame:        amqp.Game_DOFUS_RETRO,
+			BotName:         "KaellyRetro",
+			BotAvatarURL:    cdnURL + "/kaellyretro/id/face.webp",
+			DiscordTokenKey: DiscordTokenDofusRetro,
 		},
 	}
 }

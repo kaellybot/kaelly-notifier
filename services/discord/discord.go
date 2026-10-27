@@ -88,7 +88,7 @@ func (service *Impl) SendMessage(correlationID string, game amqp.Game, channelID
 }
 
 // session returns the bot that serves this game. Every game with a bot has a session
-// by construction, so a miss means a game no bot serves, such as Retro. Its news is
+// by construction, so a miss means a game no bot serves. Its news is
 // dropped rather than posted with another game's bot, which would put it in the wrong
 // bot's name and make crossposting impossible.
 func (service *Impl) session(correlationID string, game amqp.Game) (*discordgo.Session, bool) {

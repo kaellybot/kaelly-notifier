@@ -14,6 +14,10 @@ const (
 	// every game, so starting without it would leave Touch news undelivered.
 	DiscordTokenDofusTouch = "DISCORD_TOKEN_DOFUS_TOUCH"
 
+	// Discord Bot Token of the DOFUS Retro application. Required: the notifier serves
+	// every game, so starting without it would leave Retro news undelivered.
+	DiscordTokenDofusRetro = "DISCORD_TOKEN_DOFUS_RETRO"
+
 	// Channel snowflake for internal informations.
 	ReportingChannelID = "REPORTING_CHANNEL_ID"
 
@@ -46,6 +50,7 @@ const (
 
 	defaultDiscordToken       = ""
 	defaultDiscordTokenTouch  = ""
+	defaultDiscordTokenRetro  = ""
 	defaultReportingChannelID = ""
 	defaultMySQLURL           = "localhost:3306"
 	defaultMySQLUser          = ""
@@ -62,6 +67,7 @@ func GetDefaultConfigValues() map[string]any {
 	return map[string]any{
 		DiscordToken:           defaultDiscordToken,
 		DiscordTokenDofusTouch: defaultDiscordTokenTouch,
+		DiscordTokenDofusRetro: defaultDiscordTokenRetro,
 		ReportingChannelID:     defaultReportingChannelID,
 		MySQLURL:               defaultMySQLURL,
 		MySQLUser:              defaultMySQLUser,

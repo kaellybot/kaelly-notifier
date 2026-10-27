@@ -145,7 +145,7 @@ func TestGet_UnknownGameRendersNothing(t *testing.T) {
 		t.Fatalf("New() = %v, want nil", err)
 	}
 
-	if got := service.GetMiscStringEmoji(amqp.Game_DOFUS_RETRO, constants.EmojiIDKama); got != "" {
+	if got := service.GetMiscStringEmoji(amqp.Game_ANY_GAME, constants.EmojiIDKama); got != "" {
 		t.Errorf("got %q, want empty", got)
 	}
 }
